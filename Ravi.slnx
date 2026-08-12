@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ravi.App/Ravi.App.csproj" />
+    <Project Path="src/Ravi.Core/Ravi.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ravi.Core.Tests/Ravi.Core.Tests.csproj" />
+  </Folder>
+</Solution>

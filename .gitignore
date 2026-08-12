@@ -1,0 +1,31 @@
+# Build output
+**/bin/
+**/obj/
+artifacts/
+
+# IDE and user settings
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Signing and secrets
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+secrets.json
+appsettings.*.local.json
+.env
+.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+work/
