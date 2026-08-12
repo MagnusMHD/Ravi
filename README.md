@@ -43,6 +43,12 @@ dotnet workload restore src/Ravi.App/Ravi.App.csproj
 dotnet build src/Ravi.App/Ravi.App.csproj -f net10.0-android
 ```
 
+On macOS with Xcode installed, build and run the Mac Catalyst target with:
+
+```sh
+dotnet build src/Ravi.App/Ravi.App.csproj -t:Run -f net10.0-maccatalyst
+```
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
