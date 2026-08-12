@@ -53,10 +53,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\Images\ravi_logo.png" Color="#F8F4EA" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#F8F4EA" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Images\ravi_logo.png" Color="#F8F4EA" BaseSize="256,256" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#F8F4EA" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
