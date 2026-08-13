@@ -56,6 +56,9 @@ public partial class MainPage : ContentPage
         // comfortable reading widths while using the same visual language.
         StartHero.HeightRequest = Math.Max(680, Height);
         ProfileStage.HeightRequest = Math.Max(680, Height - 70);
+        GradesStage.HeightRequest = Math.Max(680, Height - 70);
+        LessonsStage.HeightRequest = Math.Max(680, Height - 70);
+        LearningStage.MinimumHeightRequest = Math.Max(680, Height - 70);
     }
 
     protected override void OnDisappearing()
