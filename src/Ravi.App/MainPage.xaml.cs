@@ -55,6 +55,7 @@ public partial class MainPage : ContentPage
         // The start artwork fills the complete window; the remaining screens keep
         // comfortable reading widths while using the same visual language.
         StartHero.HeightRequest = Math.Max(680, Height);
+        ProfileStage.HeightRequest = Math.Max(680, Height - 70);
     }
 
     protected override void OnDisappearing()

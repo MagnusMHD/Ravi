@@ -39,6 +39,13 @@
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="CharacterSpacing" Value="1.6" />
         </Style>
+        <Style x:Key="Field" TargetType="Entry">
+            <Setter Property="BackgroundColor" Value="#DFFFFFFF" />
+            <Setter Property="TextColor" Value="#20262D" />
+            <Setter Property="PlaceholderColor" Value="#7A8188" />
+            <Setter Property="HeightRequest" Value="58" />
+            <Setter Property="Margin" Value="0,3" />
+        </Style>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
@@ -88,33 +95,49 @@
                 </Grid>
 
                 <!-- Profile -->
-                <VerticalStackLayout IsVisible="{Binding IsProfile}" Spacing="18" Margin="36,22,36,64" MaximumWidthRequest="1120" HorizontalOptions="Fill">
-                    <Grid ColumnDefinitions="*,135">
-                        <VerticalStackLayout VerticalOptions="Center" Spacing="6">
-                            <Label Text="YOUR PROFILE" Style="{StaticResource SectionLabel}" />
-                            <Label Text="Let Ravi get to know you" TextColor="#102D55" FontSize="29" FontAttributes="Bold" />
-                            <Label Text="Your details make every story and exercise personal." TextColor="#607086" FontSize="15" />
+                <Grid x:Name="ProfileStage" IsVisible="{Binding IsProfile}" MinimumHeightRequest="680" Margin="36,18,36,50" MaximumWidthRequest="1180" HorizontalOptions="Fill">
+                    <Grid ColumnDefinitions="1.05*,0.95*" ColumnSpacing="20">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="18" MaximumWidthRequest="520">
+                            <Border BackgroundColor="#E8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 18" Padding="14,8" HorizontalOptions="Start">
+                                <Label Text="CREATE YOUR LEARNING ID" Style="{StaticResource SectionLabel}" FontSize="10" />
+                            </Border>
+                            <Label Text="Let Ravi get to know you." TextColor="#171C22" FontSize="44" FontAttributes="Bold" LineHeight="1" />
+                            <Label Text="Your details shape the stories, exercises and learning path Ravi prepares for you." TextColor="#59616A" FontSize="16" LineHeight="1.35" />
+                            <Border Style="{StaticResource Card}" Padding="26">
+                                <VerticalStackLayout Spacing="11">
+                                    <Label Text="YOUR NAME" TextColor="#555E67" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                    <Entry Text="{Binding StudentName}" Placeholder="First name or nickname" Style="{StaticResource Field}" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                        <VerticalStackLayout Spacing="7">
+                                            <Label Text="YOUR AGE" TextColor="#555E67" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                            <Entry Text="{Binding AgeText}" Placeholder="For example: 13" Keyboard="Numeric" MaxLength="2" Style="{StaticResource Field}" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="7">
+                                            <Label Text="CHOOSE ONE" TextColor="#555E67" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                <Button Text="Girl" Command="{Binding SelectGenderCommand}" CommandParameter="Girl" BackgroundColor="{Binding GirlButtonColor}" TextColor="{Binding GirlTextColor}" BorderColor="#80FFFFFF" BorderWidth="1" CornerRadius="25" HeightRequest="58" />
+                                                <Button Grid.Column="1" Text="Boy" Command="{Binding SelectGenderCommand}" CommandParameter="Boy" BackgroundColor="{Binding BoyButtonColor}" TextColor="{Binding BoyTextColor}" BorderColor="#80FFFFFF" BorderWidth="1" CornerRadius="25" HeightRequest="58" />
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <Label Text="{Binding ProfileError}" IsVisible="{Binding HasProfileError}" TextColor="#C34040" FontAttributes="Bold" />
+                                    <Button Text="Start my adventure     →" Command="{Binding CreateProfileCommand}" Style="{StaticResource Primary}" Margin="0,6,0,0" />
+                                </VerticalStackLayout>
+                            </Border>
                         </VerticalStackLayout>
-                        <Image x:Name="RaviProfile" Grid.Column="1" Source="ravi_ui.png" HeightRequest="145" Aspect="AspectFit">
-                            <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
-                        </Image>
+                        <Grid Grid.Column="1">
+                            <Image x:Name="RaviProfile" Source="ravi_ui.png" HeightRequest="610" Aspect="AspectFit" VerticalOptions="End">
+                                <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
+                            </Image>
+                            <Border BackgroundColor="#C8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,8,100">
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="RAVI SAYS" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                    <Label Text="This will only take a moment." TextColor="#242A31" FontSize="15" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
                     </Grid>
-                    <Border Style="{StaticResource Card}">
-                        <VerticalStackLayout Spacing="13">
-                            <Label Text="What is your name?" TextColor="#102D55" FontAttributes="Bold" />
-                            <Entry Text="{Binding StudentName}" Placeholder="Your first name or nickname" BackgroundColor="#F4F7FA" TextColor="#102D55" HeightRequest="54" />
-                            <Label Text="How old are you?" TextColor="#102D55" FontAttributes="Bold" />
-                            <Entry Text="{Binding AgeText}" Placeholder="For example: 13" Keyboard="Numeric" MaxLength="2" BackgroundColor="#F4F7FA" TextColor="#102D55" HeightRequest="54" />
-                            <Label Text="Choose one" TextColor="#102D55" FontAttributes="Bold" />
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                                <Button Text="Girl" Command="{Binding SelectGenderCommand}" CommandParameter="Girl" BackgroundColor="{Binding GirlButtonColor}" TextColor="{Binding GirlTextColor}" BorderColor="#C9D7E7" BorderWidth="1" CornerRadius="14" HeightRequest="54" />
-                                <Button Grid.Column="1" Text="Boy" Command="{Binding SelectGenderCommand}" CommandParameter="Boy" BackgroundColor="{Binding BoyButtonColor}" TextColor="{Binding BoyTextColor}" BorderColor="#C9D7E7" BorderWidth="1" CornerRadius="14" HeightRequest="54" />
-                            </Grid>
-                            <Label Text="{Binding ProfileError}" IsVisible="{Binding HasProfileError}" TextColor="#C34040" FontAttributes="Bold" />
-                        </VerticalStackLayout>
-                    </Border>
-                    <Button Text="Start my adventure  →" Command="{Binding CreateProfileCommand}" Style="{StaticResource Primary}" />
-                </VerticalStackLayout>
+                </Grid>
 
                 <!-- Grades -->
                 <VerticalStackLayout IsVisible="{Binding IsGrades}" Spacing="18" Margin="36,22,36,64" MaximumWidthRequest="1120" HorizontalOptions="Fill">
@@ -125,7 +148,7 @@
                                 <Label Text="Which grade are you in?" TextColor="#171C22" FontSize="34" FontAttributes="Bold" />
                                 <Label Text="پایه خود را انتخاب کن تا راوی مسیر مناسب را باز کند." FlowDirection="RightToLeft" TextColor="#555E67" FontSize="16" HorizontalTextAlignment="End" />
                             </VerticalStackLayout>
-                            <Image Grid.Column="1" Source="ravi_ui.png" HeightRequest="160" Aspect="AspectFit" />
+                            <Image Grid.Column="1" Source="ravi_ui.png" HeightRequest="220" Aspect="AspectFit" />
                         </Grid>
                     </Border>
                     <FlexLayout BindableLayout.ItemsSource="{Binding Grades}" Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Start">
@@ -160,7 +183,7 @@
                             <Label Text="{Binding GradeTitle}" TextColor="#F0522D" FontAttributes="Bold" />
                             <Label Text="{Binding WelcomeSubtitle}" TextColor="#607086" />
                         </VerticalStackLayout>
-                        <Image x:Name="RaviCourse" Grid.Column="1" Source="ravi_ui.png" HeightRequest="150" Aspect="AspectFit">
+                        <Image x:Name="RaviCourse" Grid.Column="1" Source="ravi_ui.png" HeightRequest="220" Aspect="AspectFit">
                             <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
                         </Image>
                     </Grid>
@@ -215,9 +238,9 @@
                                 <Label Text="{Binding RaviTip}" FlowDirection="RightToLeft" TextColor="#424A52" FontSize="14" HorizontalTextAlignment="End" />
                             </Border>
                         </VerticalStackLayout>
-                        <Border Grid.Column="1" BackgroundColor="#BFFFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 24" Padding="8" HeightRequest="180" WidthRequest="170">
+                        <Border Grid.Column="1" BackgroundColor="#BFFFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 24" Padding="8" HeightRequest="240" WidthRequest="210">
                             <Grid>
-                                <Image x:Name="RaviLesson" Source="ravi_ui.png" HeightRequest="154" WidthRequest="144" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image x:Name="RaviLesson" Source="ravi_ui.png" HeightRequest="220" WidthRequest="190" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center">
                                     <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
                                 </Image>
                                 <Border x:Name="RaviSpeakingBadge" BackgroundColor="#252B32" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="9,5" HorizontalOptions="Center" VerticalOptions="End" Opacity="0">
