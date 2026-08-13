@@ -134,6 +134,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public string StepTitle => CurrentStep.Title;
     public string StepContent => CurrentStep.Content;
     public string StepTranslation => _showTranslation ? CurrentStep.Translation : "Show Persian translation  فارسی";
+    public string StoryTranslation => CurrentStep.Translation;
     public string AnswerPrompt => CurrentStep.AnswerPrompt;
     public string ProgressLabel => $"Step {_stepIndex + 1} of {_steps.Length}";
     public double LessonProgress => _steps.Length == 0 ? 0 : (_stepIndex + 1d) / _steps.Length;
@@ -148,6 +149,13 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public bool IsRegularStep => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
     public bool ShowExercise => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
     public bool HasTranslation => !string.IsNullOrWhiteSpace(CurrentStep.Translation);
+    public bool CanSpeakContent => CurrentStep.Eyebrow.Contains("LISTENING", StringComparison.Ordinal) || CurrentStep.Eyebrow.Contains("DICTATION", StringComparison.Ordinal);
+    public string RaviTip => _grade == 7
+        ? IsVocabularyStep ? "روی واژه انگلیسی بزن تا راوی آن را تلفظ کند."
+        : IsPhraseStep ? "روی هر جمله بزن، گوش کن و سپس با صدای بلند تکرار کن."
+        : IsStoryStep ? "داستان را بخوان. با لمس متن انگلیسی، راوی کل داستان را برایت می‌خواند."
+        : "راوی کنار توست؛ راهنمای فارسی را بخوان و پاسخ را بنویس."
+        : "Ravi is here to help you at every step.";
 
     private void SelectRole(string? role) { if (role == "Student") { _screen = "Profile"; NotifyAll(); } }
     private void SelectGender(string? gender) { _gender = gender is "Girl" or "Boy" ? gender : string.Empty; _profileError = string.Empty; NotifyAll(); }
@@ -207,15 +215,15 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         var storyFarsi = BuildStoryFarsi(lesson);
         return
         [
-            new("01 · WELCOME", $"{lesson.Title}, {_studentName}!", $"Hello, {_studentName}! Today’s mission is {lesson.Topic}.", $"سلام {_studentName}! مأموریت امروز درباره {lesson.Topic} است.", "hello", "Write an English greeting to Ravi."),
+            new("01 · WELCOME", $"{lesson.Title}, {_studentName}!", $"Hello, {_studentName}! Today’s mission is {lesson.Topic}.", $"سلام {_studentName}! مأموریت امروز درباره {lesson.Topic} است.", "hello", "یک سلام انگلیسی برای راوی بنویس."),
             new("02 · VOCABULARY", "New vocabulary", lesson.Words, lesson.WordsFarsi, lesson.Words.Split('·')[0].Trim(), "Tap each speaker, listen, and learn every word."),
-            new("03 · ENGLISH → FARSI", "English to Persian", lesson.Words, lesson.WordsFarsi, lesson.WordsFarsi.Split('·')[0].Trim(), "Translate the first English word into Persian."),
-            new("04 · FARSI → ENGLISH", "Persian to English", lesson.WordsFarsi, lesson.Words, lesson.Words.Split('·')[0].Trim(), "Translate the first Persian word into English."),
-            new("05 · STORY", "Ravi’s continuing adventure", story, storyFarsi, lesson.Expected, lesson.Question),
-            new("06 · GRAMMAR", lesson.Grammar, $"Example: {_studentName} is {_ageText} years old. {subjectTitle} is Ravi’s friend. Read the rule, then complete the sentence below.", $"مثال: {_studentName} {_ageText} سال دارد. او دوست راوی است.", subject, $"Complete with he or she: {_studentName} is my friend. ___ is {_ageText}."),
-            new("07 · LISTENING", "Listen without reading first", story, storyFarsi, lesson.Expected, lesson.Question),
-            new("08 · DICTATION", "Listen and write", $"{_studentName} is Ravi’s friend.", $"{_studentName} دوست راوی است.", _studentName, "Listen without reading, then write the English sentence."),
-            new("09 · WRITING", "Your turn", $"Write two sentences about {lesson.Topic.ToLowerInvariant()}. Ravi gives {obj} a golden leaf for a complete answer.", $"دو جمله درباره موضوع درس بنویس. راوی برای پاسخ کامل یک برگ طلایی می‌دهد.", _studentName, $"Begin with: My name is {_studentName}."),
+            new("03 · ENGLISH → FARSI", "English to Persian", lesson.Words, lesson.WordsFarsi, lesson.WordsFarsi.Split('·')[0].Trim(), "معنی فارسی اولین واژه انگلیسی را بنویس."),
+            new("04 · FARSI → ENGLISH", "Persian to English", lesson.WordsFarsi, lesson.Words, lesson.Words.Split('·')[0].Trim(), "معادل انگلیسی اولین واژه فارسی را بنویس."),
+            new("05 · STORY", "Ravi’s continuing adventure", story, storyFarsi, lesson.Expected, "پرسش داستان را با یک واژه انگلیسی پاسخ بده. پاسخ در متن است."),
+            new("06 · GRAMMAR", lesson.Grammar, $"در این بخش یاد می‌گیریم چگونه جمله را بسازیم. به نمونه نگاه کن:\n{_studentName} is {_ageText} years old.\n{subjectTitle} is Ravi’s friend.\nکلمهٔ «{subjectTitle.ToLowerInvariant()}» برای اشاره دوباره به نام به کار می‌رود.", "", subject, $"جای خالی را با he یا she پر کن:\n{_studentName} is my friend. ___ is {_ageText}."),
+            new("07 · LISTENING", "Listen without reading first", story, storyFarsi, lesson.Expected, "ابتدا فقط گوش کن. سپس پاسخ پرسش داستان را با یک واژه انگلیسی بنویس."),
+            new("08 · DICTATION", "Listen and write", $"{_studentName} is Ravi’s friend.", $"{_studentName} دوست راوی است.", _studentName, "بدون نگاه کردن به متن گوش کن و جمله انگلیسی را بنویس."),
+            new("09 · WRITING", "Your turn", $"Write two sentences about {lesson.Topic.ToLowerInvariant()}. Ravi gives {obj} a golden leaf for a complete answer.", $"دو جمله درباره موضوع درس بنویس. راوی برای پاسخ کامل یک برگ طلایی می‌دهد.", _studentName, $"دو جمله انگلیسی بنویس. با این جمله شروع کن: My name is {_studentName}."),
             new("10 · LESSON EXAM", "Ravi’s Challenge", $"Exam: vocabulary, English↔Farsi, grammar, listening, dictation, reading and writing. Pass mark: 60%. Story question: {lesson.Question}", $"آزمون: واژگان، ترجمه دوطرفه، دستور زبان، شنیداری، املا، خواندن و نوشتن. حد قبولی: ۶۰٪", lesson.Expected, lesson.Question),
             new("11 · REWARD", $"Well done, {_studentName}!", $"You completed {lesson.Title}. Reward: up to 3 stars, 50 golden leaves and a Ravi badge.", $"آفرین {_studentName}! این درس را تمام کردی. جایزه: تا سه ستاره، ۵۰ برگ طلایی و نشان راوی.", "ravi", "Write: Thank you, Ravi!"),
         ];
@@ -230,19 +238,19 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         [
             new("01 · NEW VOCABULARY", "Words and useful expressions", "hello · hi · good morning · good afternoon · good evening · goodbye · see you · please · thank you · fine · great · tired · today · name · friend", "سلام · سلام · صبح بخیر · بعدازظهر بخیر · عصر بخیر · خداحافظ · به امید دیدار · لطفاً · متشکرم · خوب · عالی · خسته · امروز · نام · دوست", "hello", "Listen to every word before you continue."),
             new("02 · PRONUNCIATION", "Ravi’s Echo", "1. Hello!\n2. Good morning.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام!\n۲. صبح بخیر.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "hello", "Listen and repeat each line aloud."),
-            new("03 · VOCABULARY PRACTICE", "English → Persian", "Write the Persian meaning of the English word: hello", "", "سلام", "What does “hello” mean in Persian? Write one answer."),
-            new("04 · VOCABULARY PRACTICE", "Persian → English", "Write the English word for the Persian meaning: متشکرم", "", "thank you", "What is “متشکرم” in English? Write one answer."),
-            new("05 · STORY", "The Secret Door", story, storyFarsi, "blue", "What colour is the secret door?"),
-            new("06 · READING", "Story comprehension", "TRUE OR FALSE\n1. Ravi is a fox.\n2. It is evening.\n3. The door is blue.\n4. The girl’s name is Sara.\n5. Nika needs Ravi’s help.\n\nQUESTIONS\n• Where is Ravi?\n• What is behind the door?\n• How does Ravi feel?", "درست یا نادرست و پرسش‌های درک مطلب درباره داستان", "school", "Where is Ravi? Write: Near a school."),
-            new("07 · TRANSLATION", "English → Persian", "1. Hello.\n2. My name is Ravi.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام.\n۲. نام من راوی است.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "سلام", "Translate “Hello.” into Persian."),
-            new("08 · TRANSLATION", "Persian → English", "1. سلام.\n2. نام من نیکا است.\n3. حالت چطور است؟\n4. من عالی‌ام.\n5. متشکرم.\n6. از آشنایی با شما خوشحالم.", "1. Hello. / Hi.\n2. My name is Nika.\n3. How are you?\n4. I’m great.\n5. Thank you.\n6. Nice to meet you.", "hello", "Translate “سلام” into English."),
-            new("09 · GRAMMAR", "The verb “to be”", "I am → I’m\nyou are → you’re\nhe is → he’s\nshe is → she’s\nit is → it’s\n\nExamples:\nI am Ravi. → I’m Ravi.\nI am fine. → I’m fine.\nI am tired. → I’m tired.", "من هستم · تو هستی · او هست · آن هست", "am", "Complete: I ___ Ravi."),
-            new("10 · LISTENING", "Listen carefully", "Good morning. My name is Amir. I’m fine today.\n\nListen twice. On the first listen, try not to read. Who is speaking? Is it morning? How is Amir?", "صبح بخیر. نام من امیر است. امروز خوبم.", "amir", "What is his name?"),
-            new("11 · DICTATION", "Listen and write", "Hello.\nMy name is Ravi.\nHow are you today?\nI’m fine, thank you.\nNice to meet you.\nGoodbye. See you!", "هر جمله را گوش کن و به انگلیسی بنویس.", "hello", "Listen, then write the first sentence."),
-            new("12 · WRITING", "Introduce yourself", $"Hello. My name is {_studentName}.\nI’m great today.\nNice to meet you.\n\nNow write three sentences: a greeting, your name, and how you feel.", $"سلام. نام من {_studentName} است. امروز عالی‌ام. از آشنایی با شما خوشحالم.", _studentName, "Write three English sentences to introduce yourself."),
-            new("13 · SPEAKING", "Speak with Ravi", $"Hello. My name is {_studentName}. I’m fine today. Nice to meet you.", $"سلام. نام من {_studentName} است. امروز خوبم. از آشنایی با شما خوشحالم.", _studentName, "Read the introduction aloud, then type it once."),
-            new("14 · LESSON EXAM", "Ravi’s First Challenge", "20 points · Pass mark: 12\n\nA. Vocabulary (4)\nB. Sentences (4)\nC. Grammar (3)\nD. Listening (3)\nE. Dictation (2)\nF. Story (2)\nG. Writing (2)\n\nStory question: Who needs Ravi’s help?", "۲۰ امتیاز · حد قبولی: ۱۲\nآزمون واژگان، جمله‌ها، دستور زبان، شنیداری، املا، داستان و نوشتن", "nika", "Who needs Ravi’s help?"),
-            new("15 · REWARD", "Ravi’s New Friend", "You earned up to three stars, 50 golden leaves, the first picture of the secret door, and access to Lesson 2: The New Student.", "تو تا سه ستاره، ۵۰ برگ طلایی، اولین تصویر در مخفی و دسترسی به درس دوم را به دست آوردی.", "thank", "Write: Thank you, Ravi!"),
+            new("03 · VOCABULARY PRACTICE", "English → Persian", "واژهٔ انگلیسی را ببین و معنی فارسی آن را بنویس:\nhello", "", "سلام", "معنی فارسی hello چیست؟ فقط یک پاسخ بنویس."),
+            new("04 · VOCABULARY PRACTICE", "Persian → English", "معنی فارسی را ببین و واژهٔ انگلیسی آن را بنویس:\nمتشکرم", "", "thank you", "معادل انگلیسی «متشکرم» چیست؟"),
+            new("05 · STORY", "The Secret Door", story, storyFarsi, "blue", "درِ مخفی چه رنگی است؟ پاسخ را به انگلیسی بنویس."),
+            new("06 · READING", "Story comprehension", "درست یا نادرست را مشخص کن:\n1. Ravi is a fox.\n2. It is evening.\n3. The door is blue.\n4. The girl’s name is Sara.\n5. Nika needs Ravi’s help.\n\nسپس به پرسش‌ها پاسخ بده:\n• راوی کجاست؟\n• پشت در چیست؟\n• راوی چه احساسی دارد؟", "", "school", "راوی کجاست؟ پاسخ کوتاه انگلیسی بنویس: Near a ..."),
+            new("07 · TRANSLATION", "English → Persian", "1. Hello.\n2. My name is Ravi.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام.\n۲. نام من راوی است.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "سلام", "جمله Hello را به فارسی ترجمه کن."),
+            new("08 · TRANSLATION", "Persian → English", "1. سلام.\n2. نام من نیکا است.\n3. حالت چطور است؟\n4. من عالی‌ام.\n5. متشکرم.\n6. از آشنایی با شما خوشحالم.", "1. Hello. / Hi.\n2. My name is Nika.\n3. How are you?\n4. I’m great.\n5. Thank you.\n6. Nice to meet you.", "hello", "«سلام» را به انگلیسی ترجمه کن."),
+            new("09 · GRAMMAR", "The verb “to be”", "فعل to be یعنی «بودن». در جمله‌های ساده بعد از فاعل می‌آید:\n\nI am → I’m  یعنی «من هستم»\nyou are → you’re  یعنی «تو هستی»\nhe is → he’s  یعنی «او (مذکر) هست»\nshe is → she’s  یعنی «او (مونث) هست»\nit is → it’s  یعنی «آن هست»\n\nشکل کوتاه در گفت‌وگوی روزمره بسیار رایج است.\n\nنمونه‌ها:\nI am Ravi. → I’m Ravi.\nI am fine. → I’m fine.\nI am tired. → I’m tired.", "", "am", "جای خالی را با شکل درست فعل to be پر کن:\nI ___ Ravi."),
+            new("10 · LISTENING", "Listen carefully", "Good morning. My name is Amir. I’m fine today.", "صبح بخیر. نام من امیر است. امروز خوبم.", "amir", "نام پسر چیست؟ پاسخ را به انگلیسی بنویس."),
+            new("11 · DICTATION", "Listen and write", "Hello.\nMy name is Ravi.\nHow are you today?\nI’m fine, thank you.\nNice to meet you.\nGoodbye. See you!", "هر جمله را گوش کن و به انگلیسی بنویس.", "hello", "گوش کن و سپس اولین جمله انگلیسی را بنویس."),
+            new("12 · WRITING", "Introduce yourself", $"نمونه:\nHello. My name is {_studentName}.\nI’m great today.\nNice to meet you.", "", _studentName, "سه جمله انگلیسی درباره خودت بنویس: سلام کن، نامت را بگو و احساست را بیان کن."),
+            new("13 · SPEAKING", "Speak with Ravi", $"Hello. My name is {_studentName}. I’m fine today. Nice to meet you.", $"سلام. نام من {_studentName} است. امروز خوبم. از آشنایی با شما خوشحالم.", _studentName, "متن معرفی را با صدای بلند بخوان و سپس یک بار به انگلیسی بنویس."),
+            new("14 · LESSON EXAM", "Ravi’s First Challenge", "20 points · Pass mark: 12\n\nA. Vocabulary (4)\nB. Sentences (4)\nC. Grammar (3)\nD. Listening (3)\nE. Dictation (2)\nF. Story (2)\nG. Writing (2)\n\nStory question: Who needs Ravi’s help?", "۲۰ امتیاز · حد قبولی: ۱۲\nآزمون واژگان، جمله‌ها، دستور زبان، شنیداری، املا، داستان و نوشتن", "nika", "چه کسی به کمک راوی نیاز دارد؟ نام او را به انگلیسی بنویس."),
+            new("15 · REWARD", "Ravi’s New Friend", "You earned up to three stars, 50 golden leaves, the first picture of the secret door, and access to Lesson 2: The New Student.", "تو تا سه ستاره، ۵۰ برگ طلایی، اولین تصویر در مخفی و دسترسی به درس دوم را به دست آوردی.", "thank", "به انگلیسی بنویس: متشکرم، راوی!"),
         ];
     }
 
@@ -288,9 +296,14 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     private void CheckAnswer()
     {
         var expected = CurrentStep.Expected;
-        _feedback = _answer.Trim().Contains(expected, StringComparison.OrdinalIgnoreCase)
-            ? $"Correct, {_studentName}! Ravi is proud of you ✨"
-            : $"Almost, {_studentName}! Ravi’s hint: your answer includes “{expected}”.";
+        var isCorrect = _answer.Trim().Contains(expected, StringComparison.OrdinalIgnoreCase);
+        _feedback = _grade == 7
+            ? isCorrect
+                ? $"آفرین {_studentName}! پاسخ درست است و راوی به تو افتخار می‌کند ✨"
+                : $"دوباره تلاش کن {_studentName}. راهنمای راوی: پاسخ شامل «{expected}» است."
+            : isCorrect
+                ? $"Correct, {_studentName}! Ravi is proud of you ✨"
+                : $"Almost, {_studentName}! Ravi’s hint: your answer includes “{expected}”.";
         NotifyAll();
     }
 

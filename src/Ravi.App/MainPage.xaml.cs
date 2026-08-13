@@ -92,4 +92,14 @@ public partial class MainPage : ContentPage
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
         await TextToSpeech.Default.SpeakAsync(text, new SpeechOptions { Locale = english, Rate = 0.85f });
     }
+
+    private async void StoryTapped(object? sender, TappedEventArgs e)
+    {
+        if (BindingContext is not HomeViewModel vm)
+            return;
+
+        var locales = await TextToSpeech.Default.GetLocalesAsync();
+        var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
+        await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.82f });
+    }
 }

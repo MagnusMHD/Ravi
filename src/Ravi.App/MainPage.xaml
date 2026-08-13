@@ -66,35 +66,11 @@
             <VerticalStackLayout Padding="24,26,24,52" Spacing="20" MaximumWidthRequest="760" HorizontalOptions="Center">
 
                 <!-- Start -->
-                <VerticalStackLayout IsVisible="{Binding IsLogin}" Spacing="22">
-                    <Grid ColumnDefinitions="*,210" ColumnSpacing="18">
-                        <VerticalStackLayout VerticalOptions="Center" Spacing="10">
-                            <Border BackgroundColor="White" Stroke="#DCE5EF" StrokeShape="RoundRectangle 16" Padding="8" WidthRequest="150" HorizontalOptions="Start">
-                                <Image Source="ravi_logo.png" HeightRequest="92" Aspect="AspectFit" />
-                            </Border>
-                            <Label Text="Your English adventure starts here."
-                                   TextColor="#102D55" FontSize="34" FontAttributes="Bold" LineHeight="1.08" />
-                            <Label Text="Learn English through vocabulary, stories, grammar, listening and writing — with Ravi by your side."
-                                   TextColor="#607086" FontSize="16" LineHeight="1.4" />
-                            <HorizontalStackLayout Spacing="8">
-                                <Border BackgroundColor="#E7F7F5" StrokeThickness="0" StrokeShape="RoundRectangle 9" Padding="9,5"><Label Text="ENGLISH" TextColor="#087F83" FontSize="10" FontAttributes="Bold" /></Border>
-                                <Border BackgroundColor="#EDF1FA" StrokeThickness="0" StrokeShape="RoundRectangle 9" Padding="9,5"><Label Text="فارسی" TextColor="#173A69" FontSize="11" FontAttributes="Bold" /></Border>
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
-                        <Border Grid.Column="1" BackgroundColor="#E7EEF8" Stroke="#C8D7E8" StrokeShape="RoundRectangle 24" Padding="8">
-                            <Image x:Name="RaviMascot" Source="ravi_guide_v2.png" HeightRequest="290" Aspect="AspectFit" />
-                        </Border>
-                    </Grid>
-
-                    <VerticalStackLayout Spacing="5">
-                        <Label Text="CHOOSE YOUR ROLE" Style="{StaticResource SectionLabel}" />
-                        <Label Text="Who is learning today?" TextColor="#102D55" FontSize="24" FontAttributes="Bold" />
-                    </VerticalStackLayout>
-                    <Button Text="🎒   Continue as a student" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" />
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                        <Button Text="Teacher · Coming soon" Style="{StaticResource Secondary}" />
-                        <Button Grid.Column="1" Text="Parent · Coming soon" Style="{StaticResource Secondary}" />
-                    </Grid>
+                <VerticalStackLayout IsVisible="{Binding IsLogin}" Spacing="16" HorizontalOptions="Center" MaximumWidthRequest="520">
+                    <Image x:Name="RaviMascot" Source="ravi_guide_v2.png" HeightRequest="370" Aspect="AspectFit" />
+                    <Label Text="Learn English with Ravi" TextColor="#102D55" FontSize="34" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Text="واژه‌ها، داستان‌ها و تمرین‌های انگلیسی با راهنمایی راوی" FlowDirection="RightToLeft" TextColor="#607086" FontSize="17" HorizontalTextAlignment="Center" />
+                    <Button Text="شروع یادگیری  →" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" />
                 </VerticalStackLayout>
 
                 <!-- Profile -->
@@ -188,7 +164,12 @@
                     </Grid>
                     <ProgressBar Progress="{Binding LessonProgress}" ProgressColor="#078F91" BackgroundColor="#DCE6EA" HeightRequest="8" />
                     <Grid ColumnDefinitions="*,140">
-                        <Label Text="{Binding StepTitle}" TextColor="#102D55" FontSize="30" FontAttributes="Bold" VerticalOptions="Center" />
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="8">
+                            <Label Text="{Binding StepTitle}" TextColor="#102D55" FontSize="30" FontAttributes="Bold" />
+                            <Border BackgroundColor="#FFF4EA" Stroke="#F5C6A7" StrokeShape="RoundRectangle 14" Padding="12,8">
+                                <Label Text="{Binding RaviTip}" FlowDirection="RightToLeft" TextColor="#9A4925" FontSize="14" HorizontalTextAlignment="End" />
+                            </Border>
+                        </VerticalStackLayout>
                         <Image x:Name="RaviLesson" Grid.Column="1" Source="ravi_guide_v2.png" HeightRequest="150" Aspect="AspectFit">
                             <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
                         </Image>
@@ -237,19 +218,24 @@
                         </VerticalStackLayout>
                     </VerticalStackLayout>
 
-                    <!-- Story: every English paragraph is directly opposite its Persian translation. -->
+                    <!-- Storybook page: one continuous story with its translation opposite. -->
                     <VerticalStackLayout IsVisible="{Binding IsStoryStep}" Spacing="12">
-                        <Label Text="Tap an English paragraph to hear it." TextColor="#607086" />
-                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding LessonLines}" Spacing="10">
-                            <BindableLayout.ItemTemplate><DataTemplate>
-                                <Border Style="{StaticResource Card}" Padding="18">
-                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
-                                        <Button Text="{Binding English}" Clicked="SpeakLineClicked" BackgroundColor="Transparent" TextColor="#203858" FontSize="18" LineBreakMode="WordWrap" Padding="0" HorizontalOptions="Fill" VerticalOptions="Start" />
-                                        <Label Grid.Column="1" Text="{Binding Persian}" FlowDirection="RightToLeft" TextColor="#087F83" FontSize="18" LineHeight="1.45" HorizontalTextAlignment="End" VerticalOptions="Start" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate></BindableLayout.ItemTemplate>
-                        </VerticalStackLayout>
+                        <Image Source="lesson1_secret_door.jpg" HeightRequest="310" Aspect="AspectFill" />
+                        <Border Style="{StaticResource Card}" Padding="24">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="28">
+                                <VerticalStackLayout Spacing="10">
+                                    <Label Text="ENGLISH · TAP TO LISTEN" Style="{StaticResource SectionLabel}" />
+                                    <Label Text="{Binding StepContent}" TextColor="#203858" FontSize="18" LineHeight="1.55">
+                                        <Label.GestureRecognizers><TapGestureRecognizer Tapped="StoryTapped" /></Label.GestureRecognizers>
+                                    </Label>
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" Spacing="10">
+                                    <Label Text="ترجمه فارسی" FlowDirection="RightToLeft" TextColor="#E65F2B" FontAttributes="Bold" HorizontalTextAlignment="End" />
+                                    <Label Text="{Binding StoryTranslation}" FlowDirection="RightToLeft" TextColor="#087F83" FontSize="18" LineHeight="1.55" HorizontalTextAlignment="End" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                        <Image Source="lesson1_magic_passage.jpg" HeightRequest="280" Aspect="AspectFill" />
                     </VerticalStackLayout>
 
                     <!-- Story, grammar, listening, dictation and writing -->
@@ -257,7 +243,7 @@
                         <Border Style="{StaticResource Card}" BackgroundColor="#EAF1F9" Stroke="#C4D5E8">
                             <VerticalStackLayout Spacing="16">
                                 <Label Text="{Binding StepContent}" TextColor="#203858" FontSize="20" LineHeight="1.55" />
-                                <Button Text="🔊   Listen in English" Clicked="SpeakClicked" Style="{StaticResource Secondary}" />
+                                <Button Text="🔊   Listen in English" IsVisible="{Binding CanSpeakContent}" Clicked="SpeakClicked" Style="{StaticResource Secondary}" />
                                 <Button Text="{Binding StepTranslation}" IsVisible="{Binding HasTranslation}" Command="{Binding ToggleTranslationCommand}" BackgroundColor="Transparent" TextColor="#C74F25" FontAttributes="Bold" FontSize="16" />
                             </VerticalStackLayout>
                         </Border>
@@ -265,10 +251,13 @@
 
                     <Border Style="{StaticResource Card}" IsVisible="{Binding ShowExercise}">
                         <VerticalStackLayout Spacing="12">
-                            <Label Text="YOUR TURN" Style="{StaticResource SectionLabel}" />
+                            <Grid ColumnDefinitions="*,70">
+                                <Label Text="تمرین با راوی" FlowDirection="RightToLeft" TextColor="#078F91" FontAttributes="Bold" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                <Image Grid.Column="1" Source="ravi_guide_v2.png" HeightRequest="76" Aspect="AspectFit" />
+                            </Grid>
                             <Label Text="{Binding AnswerPrompt}" TextColor="#52647B" FontSize="15" />
-                            <Entry Text="{Binding Answer}" Placeholder="Type your answer in English…" BackgroundColor="#F3F6FA" TextColor="#102D55" HeightRequest="54" />
-                            <Button Text="Check my answer" Command="{Binding CheckCommand}" Style="{StaticResource Secondary}" />
+                            <Entry Text="{Binding Answer}" Placeholder="پاسخ را اینجا بنویس…" BackgroundColor="#F3F6FA" TextColor="#102D55" HeightRequest="54" />
+                            <Button Text="بررسی پاسخ" Command="{Binding CheckCommand}" Style="{StaticResource Secondary}" />
                             <Label Text="{Binding Feedback}" IsVisible="{Binding HasFeedback}" TextColor="#087F83" FontAttributes="Bold" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Border>
