@@ -2,39 +2,39 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Ravi.App.MainPage"
-             BackgroundColor="#F6F8FB"
+             BackgroundColor="#E6E7E8"
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <Style x:Key="Card" TargetType="Border">
-            <Setter Property="BackgroundColor" Value="White" />
-            <Setter Property="Stroke" Value="#E1E7EF" />
+            <Setter Property="BackgroundColor" Value="#F2FFFFFF" />
+            <Setter Property="Stroke" Value="#66FFFFFF" />
             <Setter Property="StrokeThickness" Value="1" />
-            <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 24" />
             <Setter Property="Padding" Value="20" />
             <Setter Property="Shadow">
-                <Shadow Brush="#102D55" Opacity="0.06" Radius="12" Offset="0,4" />
+                <Shadow Brush="#111820" Opacity="0.13" Radius="24" Offset="0,10" />
             </Setter>
         </Style>
         <Style x:Key="Primary" TargetType="Button">
-            <Setter Property="BackgroundColor" Value="#12345B" />
+            <Setter Property="BackgroundColor" Value="#F0522D" />
             <Setter Property="TextColor" Value="White" />
-            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="CornerRadius" Value="27" />
             <Setter Property="HeightRequest" Value="54" />
             <Setter Property="Padding" Value="20,12" />
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="FontSize" Value="16" />
         </Style>
         <Style x:Key="Secondary" TargetType="Button">
-            <Setter Property="BackgroundColor" Value="White" />
-            <Setter Property="TextColor" Value="#12345B" />
-            <Setter Property="BorderColor" Value="#CBD5E1" />
+            <Setter Property="BackgroundColor" Value="#EFFFFFFF" />
+            <Setter Property="TextColor" Value="#171C22" />
+            <Setter Property="BorderColor" Value="#66FFFFFF" />
             <Setter Property="BorderWidth" Value="1" />
-            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="CornerRadius" Value="25" />
             <Setter Property="HeightRequest" Value="50" />
             <Setter Property="FontAttributes" Value="Bold" />
         </Style>
         <Style x:Key="SectionLabel" TargetType="Label">
-            <Setter Property="TextColor" Value="#0E7C7B" />
+            <Setter Property="TextColor" Value="#F0522D" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="CharacterSpacing" Value="1.6" />
@@ -42,33 +42,50 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <Grid Padding="22,11" BackgroundColor="#102D55" ColumnDefinitions="44,*,Auto" ColumnSpacing="12">
+        <Grid Padding="24,13" BackgroundColor="#E6E7E8" ColumnDefinitions="44,*,Auto" ColumnSpacing="12">
             <Button Text="‹" Command="{Binding BackCommand}" IsVisible="{Binding ShowBack}"
-                    BackgroundColor="Transparent" TextColor="White" FontSize="29" Padding="0" />
+                    BackgroundColor="Transparent" TextColor="#171C22" FontSize="29" Padding="0" />
             <HorizontalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="10">
-                <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="3" HeightRequest="42" WidthRequest="42">
+                <Border BackgroundColor="#F7F7F7" Stroke="#80FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 14" Padding="4" HeightRequest="44" WidthRequest="44">
                     <Image Source="ravi_logo.png" Aspect="AspectFit" />
                 </Border>
                 <VerticalStackLayout Spacing="-2" VerticalOptions="Center">
-                    <Label Text="RAVI" TextColor="White" FontSize="20" FontAttributes="Bold" CharacterSpacing="2" />
-                    <Label Text="ENGLISH ADVENTURE" TextColor="#65D5D1" FontSize="8" CharacterSpacing="1.2" />
+                    <Label Text="RAVI" TextColor="#171C22" FontSize="20" FontAttributes="Bold" CharacterSpacing="2" />
+                    <Label Text="ENGLISH ADVENTURE" TextColor="#59616A" FontSize="8" CharacterSpacing="1.2" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
-            <Border Grid.Column="2" BackgroundColor="#1B416D" Stroke="#365A82" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="12,7">
-                <Label Text="{Binding StudentBadge}" TextColor="#E7EEF7" FontSize="12" FontAttributes="Bold" />
+            <Border Grid.Column="2" BackgroundColor="#DFFFFFFF" Stroke="#66FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 18" Padding="14,8">
+                <Label Text="{Binding StudentBadge}" TextColor="#242A31" FontSize="12" FontAttributes="Bold" />
             </Border>
         </Grid>
 
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout x:Name="PageContent" Padding="28,30,28,56" Spacing="22" MaximumWidthRequest="820" HorizontalOptions="Center">
+            <VerticalStackLayout x:Name="PageContent" Padding="28,22,28,56" Spacing="22" MaximumWidthRequest="940" HorizontalOptions="Center">
 
                 <!-- Start -->
-                <VerticalStackLayout IsVisible="{Binding IsLogin}" Spacing="16" HorizontalOptions="Center" MaximumWidthRequest="520">
-                    <Image x:Name="RaviMascot" Source="ravi_ui.png" HeightRequest="370" Aspect="AspectFit" />
-                    <Label Text="Learn English with Ravi" TextColor="#102D55" FontSize="34" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                    <Label Text="واژه‌ها، داستان‌ها و تمرین‌های انگلیسی با راهنمایی راوی" FlowDirection="RightToLeft" TextColor="#607086" FontSize="17" HorizontalTextAlignment="Center" />
-                    <Button Text="شروع یادگیری  →" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" />
-                </VerticalStackLayout>
+                <Grid IsVisible="{Binding IsLogin}" HeightRequest="600">
+                    <Border Stroke="#66FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 38" BackgroundColor="#D9DADB">
+                        <Grid>
+                            <Image x:Name="RaviMascot" Source="ravi_editorial_hero.jpg" Aspect="AspectFill" />
+                            <Grid Padding="42" ColumnDefinitions="1.05*,*">
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="16" MaximumWidthRequest="420">
+                                    <Border BackgroundColor="#E8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 19" Padding="14,8" HorizontalOptions="Start">
+                                        <Label Text="ENGLISH, MADE PERSONAL" TextColor="#272D34" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.6" />
+                                    </Border>
+                                    <Label Text="Your next story starts here." TextColor="#11161B" FontSize="48" FontAttributes="Bold" LineHeight="0.98" />
+                                    <Label Text="راوی قدم‌به‌قدم کنارت است؛ از اولین واژه تا یک داستان کامل." FlowDirection="RightToLeft" TextColor="#4D555D" FontSize="17" LineHeight="1.35" HorizontalTextAlignment="End" />
+                                    <Button Text="Start learning     →" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" HorizontalOptions="Start" WidthRequest="220" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <Border BackgroundColor="#C8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 27" Padding="22,16" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,34,0">
+                                <VerticalStackLayout Spacing="3">
+                                    <Label Text="RAVI GUIDE" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.5" />
+                                    <Label Text="Listen · Read · Speak" TextColor="#1C2229" FontSize="17" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
 
                 <!-- Profile -->
                 <VerticalStackLayout IsVisible="{Binding IsProfile}" Spacing="18">
@@ -101,32 +118,32 @@
 
                 <!-- Grades -->
                 <VerticalStackLayout IsVisible="{Binding IsGrades}" Spacing="18">
-                    <Border BackgroundColor="#102D55" StrokeThickness="0" StrokeShape="RoundRectangle 20" Padding="28,20">
-                        <Grid ColumnDefinitions="*,150">
+                    <Border BackgroundColor="#DDE0E2" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 30" Padding="32,24">
+                        <Grid ColumnDefinitions="*,170">
                             <VerticalStackLayout VerticalOptions="Center" Spacing="7">
-                                <Label Text="CHOOSE YOUR PATH" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" />
-                                <Label Text="Which grade are you in?" TextColor="White" FontSize="30" FontAttributes="Bold" />
-                                <Label Text="پایه خود را انتخاب کن تا راوی مسیر مناسب را باز کند." FlowDirection="RightToLeft" TextColor="#DCE8F7" FontSize="16" HorizontalTextAlignment="End" />
+                                <Label Text="CHOOSE YOUR PATH" TextColor="#F0522D" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" />
+                                <Label Text="Which grade are you in?" TextColor="#171C22" FontSize="34" FontAttributes="Bold" />
+                                <Label Text="پایه خود را انتخاب کن تا راوی مسیر مناسب را باز کند." FlowDirection="RightToLeft" TextColor="#555E67" FontSize="16" HorizontalTextAlignment="End" />
                             </VerticalStackLayout>
                             <Image Grid.Column="1" Source="ravi_ui.png" HeightRequest="160" Aspect="AspectFit" />
                         </Grid>
                     </Border>
                     <FlexLayout BindableLayout.ItemsSource="{Binding Grades}" Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Start">
                         <BindableLayout.ItemTemplate><DataTemplate>
-                            <Border BackgroundColor="White" Stroke="#DDE4EC" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="20" WidthRequest="238" Margin="0,7">
+                            <Border Style="{StaticResource Card}" Padding="22" WidthRequest="280" Margin="0,7">
                                 <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectGradeCommand}" CommandParameter="{Binding Number}" /></Border.GestureRecognizers>
                                 <VerticalStackLayout Spacing="12">
                                     <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="12">
-                                        <Border BackgroundColor="#ECF6F5" StrokeThickness="0" StrokeShape="RoundRectangle 12" HeightRequest="48" WidthRequest="48">
-                                            <Label Text="{Binding Number, StringFormat='{0:00}'}" TextColor="#0E7C7B" FontSize="17" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                        <Border BackgroundColor="#20262D" StrokeThickness="0" StrokeShape="RoundRectangle 15" HeightRequest="48" WidthRequest="48">
+                                            <Label Text="{Binding Number, StringFormat='{0:00}'}" TextColor="White" FontSize="17" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                                         </Border>
                                         <Label Grid.Column="1" Text="LEARNING PATH" TextColor="#708094" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.2" VerticalOptions="Center" />
                                         <Label Grid.Column="2" Text="{Binding PersianName}" FlowDirection="RightToLeft" TextColor="#0E7C7B" FontSize="15" FontAttributes="Bold" VerticalOptions="Center" />
                                     </Grid>
-                                    <Label Text="{Binding Number, StringFormat='Grade {0}'}" TextColor="#102D55" FontSize="25" FontAttributes="Bold" />
+                                    <Label Text="{Binding Number, StringFormat='Grade {0}'}" TextColor="#171C22" FontSize="25" FontAttributes="Bold" />
                                     <Label Text="{Binding Subtitle}" TextColor="#607086" FontSize="13" />
                                     <BoxView HeightRequest="1" Color="#E7EBF0" />
-                                    <Grid ColumnDefinitions="*,Auto"><Label Text="Select grade" TextColor="#12345B" FontAttributes="Bold" FontSize="13" /><Label Grid.Column="1" Text="→" TextColor="#D4612D" FontSize="18" /></Grid>
+                                    <Grid ColumnDefinitions="*,Auto"><Label Text="Select grade" TextColor="#242A31" FontAttributes="Bold" FontSize="13" /><Border Grid.Column="1" BackgroundColor="#F0522D" StrokeThickness="0" StrokeShape="RoundRectangle 16" Padding="11,5"><Label Text="→" TextColor="White" FontSize="17" /></Border></Grid>
                                 </VerticalStackLayout>
                             </Border>
                         </DataTemplate></BindableLayout.ItemTemplate>
@@ -135,42 +152,44 @@
 
                 <!-- Lessons -->
                 <VerticalStackLayout IsVisible="{Binding IsLessons}" Spacing="16">
-                    <Grid ColumnDefinitions="*,160">
+                    <Border BackgroundColor="#DDE0E2" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 30" Padding="30,20">
+                    <Grid ColumnDefinitions="*,180">
                         <VerticalStackLayout Spacing="5">
                             <Label Text="YOUR COURSE" Style="{StaticResource SectionLabel}" />
-                            <Label Text="{Binding WelcomeTitle}" TextColor="#102D55" FontSize="31" FontAttributes="Bold" />
-                            <Label Text="{Binding GradeTitle}" TextColor="#078F91" FontAttributes="Bold" />
+                            <Label Text="{Binding WelcomeTitle}" TextColor="#171C22" FontSize="34" FontAttributes="Bold" />
+                            <Label Text="{Binding GradeTitle}" TextColor="#F0522D" FontAttributes="Bold" />
                             <Label Text="{Binding WelcomeSubtitle}" TextColor="#607086" />
                         </VerticalStackLayout>
                         <Image x:Name="RaviCourse" Grid.Column="1" Source="ravi_ui.png" HeightRequest="150" Aspect="AspectFit">
                             <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
                         </Image>
                     </Grid>
-                    <Border Style="{StaticResource Card}" BackgroundColor="#102D55" StrokeThickness="0">
+                    </Border>
+                    <Border Style="{StaticResource Card}" BackgroundColor="#252B32" StrokeThickness="0">
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
                             <VerticalStackLayout Spacing="6">
-                                <Label Text="YOUR ADVENTURE MAP" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                <Label Text="YOUR ADVENTURE MAP" TextColor="#F0522D" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" />
                                 <Label Text="{Binding CourseProgressLabel}" TextColor="White" FontSize="21" FontAttributes="Bold" />
                             </VerticalStackLayout>
-                            <Label Grid.Column="1" Text="PATH" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" VerticalOptions="Center" />
-                            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Progress="0" ProgressColor="#F37A3F" BackgroundColor="#2B4770" HeightRequest="8" Margin="0,10,0,0" />
+                            <Label Grid.Column="1" Text="PATH" TextColor="#F0522D" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" VerticalOptions="Center" />
+                            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Progress="0" ProgressColor="#F0522D" BackgroundColor="#4B5158" HeightRequest="8" Margin="0,10,0,0" />
                         </Grid>
                     </Border>
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Lessons}" Spacing="12">
                         <BindableLayout.ItemTemplate><DataTemplate>
-                            <Border BackgroundColor="White" Stroke="#DDE4EC" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="18">
+                            <Border Style="{StaticResource Card}" Padding="20">
                                 <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenLessonCommand}" CommandParameter="{Binding .}" /></Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="68,*,Auto" ColumnSpacing="16">
-                                    <Border BackgroundColor="#EEF3F8" StrokeThickness="0" StrokeShape="RoundRectangle 14" HeightRequest="64" WidthRequest="64">
+                                    <Border BackgroundColor="#22282F" StrokeThickness="0" StrokeShape="RoundRectangle 18" HeightRequest="64" WidthRequest="64">
                                         <VerticalStackLayout Spacing="-4" HorizontalOptions="Center" VerticalOptions="Center">
-                                            <Label Text="{Binding Number}" TextColor="#12345B" FontSize="19" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                                            <BoxView HeightRequest="2" WidthRequest="22" Color="#0E7C7B" HorizontalOptions="Center" />
+                                            <Label Text="{Binding Number}" TextColor="White" FontSize="19" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                                            <BoxView HeightRequest="2" WidthRequest="22" Color="#F0522D" HorizontalOptions="Center" />
                                         </VerticalStackLayout>
                                     </Border>
                                     <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                        <Label Text="{Binding Title}" TextColor="#102D55" FontSize="19" FontAttributes="Bold" />
+                                        <Label Text="{Binding Title}" TextColor="#171C22" FontSize="19" FontAttributes="Bold" />
                                         <Label Text="{Binding Meta}" TextColor="#607086" FontSize="12" />
-                                        <Label Text="{Binding ActionLabel}" TextColor="#0E7C7B" FontSize="13" FontAttributes="Bold" />
+                                        <Label Text="{Binding ActionLabel}" TextColor="#F0522D" FontSize="13" FontAttributes="Bold" />
                                     </VerticalStackLayout>
                                     <Border Grid.Column="2" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="10,6" VerticalOptions="Center">
                                         <Label Text="{Binding Duration}" TextColor="#52647B" FontAttributes="Bold" FontSize="12" />
