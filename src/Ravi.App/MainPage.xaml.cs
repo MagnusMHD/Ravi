@@ -13,6 +13,7 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+        SizeChanged += (_, _) => ResizeStartHero();
         var viewModel = new HomeViewModel();
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         BindingContext = viewModel;
@@ -41,8 +42,19 @@ public partial class MainPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        ResizeStartHero();
         _animationCancellation = new CancellationTokenSource();
         _ = AnimateRaviAsync(_animationCancellation.Token);
+    }
+
+    private void ResizeStartHero()
+    {
+        if (Height <= 0)
+            return;
+
+        // The start artwork fills the complete window; the remaining screens keep
+        // comfortable reading widths while using the same visual language.
+        StartHero.HeightRequest = Math.Max(680, Height);
     }
 
     protected override void OnDisappearing()
