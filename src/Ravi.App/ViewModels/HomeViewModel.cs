@@ -61,6 +61,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     {
         Grades = new(Enumerable.Range(7, 6));
         Lessons = [];
+        VocabularyItems = [];
         SelectRoleCommand = new Command<string>(SelectRole);
         SelectGenderCommand = new Command<string>(SelectGender);
         CreateProfileCommand = new Command(CreateProfile);
@@ -75,6 +76,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     public ObservableCollection<int> Grades { get; }
     public ObservableCollection<LessonCard> Lessons { get; }
+    public ObservableCollection<VocabularyItem> VocabularyItems { get; }
     public ICommand SelectRoleCommand { get; }
     public ICommand SelectGenderCommand { get; }
     public ICommand CreateProfileCommand { get; }
@@ -93,31 +95,34 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public bool ShowBack => !IsLogin;
     public bool HasProfileError => !string.IsNullOrWhiteSpace(_profileError);
     public bool IsGirl => _gender == "Girl";
-    public string GirlButtonColor => IsGirl ? "#FF6B35" : "#EDF8F7";
-    public string GirlTextColor => IsGirl ? "White" : "#087F83";
-    public string BoyButtonColor => _gender == "Boy" ? "#FF6B35" : "#EDF8F7";
-    public string BoyTextColor => _gender == "Boy" ? "White" : "#087F83";
+    public string GirlButtonColor => IsGirl ? "#173A69" : "White";
+    public string GirlTextColor => IsGirl ? "White" : "#173A69";
+    public string BoyButtonColor => _gender == "Boy" ? "#173A69" : "White";
+    public string BoyTextColor => _gender == "Boy" ? "White" : "#173A69";
     public string StudentName { get => _studentName; set { _studentName = value; OnPropertyChanged(); } }
     public string AgeText { get => _ageText; set { _ageText = value; OnPropertyChanged(); } }
     public string ProfileError => _profileError;
     public string WelcomeTitle => $"Hello, {_studentName}!";
-    public string WelcomeSubtitle => $"Ravi hat deinen Lernweg für dein Alter ({_ageText}) vorbereitet.";
-    public string GradeTitle => $"Klasse {_grade}";
+    public string WelcomeSubtitle => $"Ravi has prepared a personal learning path for age {_ageText}.";
+    public string GradeTitle => $"Grade {_grade}";
     public string StudentBadge => string.IsNullOrWhiteSpace(_studentName) ? "🔥 6" : $"🦊 {_studentName}";
-    public string CourseProgressLabel => $"0 von {LessonCount} Lektionen";
+    public string CourseProgressLabel => $"0 of {LessonCount} lessons completed";
     public int LessonCount => _grade == 8 ? Grade8.Length : Grade7.Length;
     public string StepEyebrow => CurrentStep.Eyebrow;
     public string StepTitle => CurrentStep.Title;
     public string StepContent => CurrentStep.Content;
-    public string StepTranslation => _showTranslation ? CurrentStep.Translation : "ترجمه فارسی anzeigen";
+    public string StepTranslation => _showTranslation ? CurrentStep.Translation : "Show Persian translation  فارسی";
     public string AnswerPrompt => CurrentStep.AnswerPrompt;
-    public string ProgressLabel => $"Schritt {_stepIndex + 1} von {_steps.Length}";
+    public string ProgressLabel => $"Step {_stepIndex + 1} of {_steps.Length}";
     public double LessonProgress => _steps.Length == 0 ? 0 : (_stepIndex + 1d) / _steps.Length;
-    public string NextLabel => _stepIndex == _steps.Length - 1 ? "Lektion abschließen  ✦" : "Weiter  →";
+    public string NextLabel => _stepIndex == _steps.Length - 1 ? "Complete lesson  ✦" : "Continue  →";
     public string Feedback => _feedback;
     public bool HasFeedback => !string.IsNullOrWhiteSpace(_feedback);
     public string Answer { get => _answer; set { _answer = value; OnPropertyChanged(); } }
     private LessonStep CurrentStep => _steps.Length == 0 ? LessonStep.Empty : _steps[_stepIndex];
+    public bool IsVocabularyStep => CurrentStep.Eyebrow.Contains("VOCABULARY", StringComparison.Ordinal);
+    public bool IsRegularStep => !IsVocabularyStep;
+    public bool IsStoryStep => CurrentStep.Eyebrow.Contains("STORY", StringComparison.Ordinal) || CurrentStep.Eyebrow.Contains("READING", StringComparison.Ordinal);
 
     private void SelectRole(string? role) { if (role == "Student") { _screen = "Profile"; NotifyAll(); } }
     private void SelectGender(string? gender) { _gender = gender is "Girl" or "Boy" ? gender : string.Empty; _profileError = string.Empty; NotifyAll(); }
@@ -125,9 +130,9 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     private void CreateProfile()
     {
         _studentName = _studentName.Trim();
-        if (_studentName.Length < 2) _profileError = "Bitte gib deinen Namen ein.";
-        else if (!int.TryParse(_ageText, out var age) || age is < 10 or > 20) _profileError = "Bitte gib ein Alter zwischen 10 und 20 ein.";
-        else if (string.IsNullOrWhiteSpace(_gender)) _profileError = "Bitte wähle Mädchen oder Junge.";
+        if (_studentName.Length < 2) _profileError = "Please enter your name.";
+        else if (!int.TryParse(_ageText, out var age) || age is < 10 or > 20) _profileError = "Please enter an age between 10 and 20.";
+        else if (string.IsNullOrWhiteSpace(_gender)) _profileError = "Please choose girl or boy.";
         else { _ageText = age.ToString(); _profileError = string.Empty; _screen = "Grades"; }
         NotifyAll();
     }
@@ -147,7 +152,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         if (_grade is not (7 or 8)) return;
 
         foreach (var item in definitions)
-            Lessons.Add(new(item.Number, item.Title, $"{item.Topic} · exam", "25 min", true, false));
+            Lessons.Add(new(item.Number, item.Title, $"{item.Topic} · vocabulary · story · practice", "25 min", true, false));
 
         Lessons.Add(new("★", $"Grade {_grade} Final Mission", "Complete level exam · certificate", "45 min", true, true));
     }
@@ -169,21 +174,21 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         var subject = IsGirl ? "she" : "he";
         var subjectTitle = IsGirl ? "She" : "He";
         var obj = IsGirl ? "her" : "him";
-        var story = Personalize(lesson.Story);
-        var storyFarsi = Personalize(lesson.StoryFarsi);
+        var story = BuildStory(lesson);
+        var storyFarsi = BuildStoryFarsi(lesson);
         return
         [
-            new("01 · WELCOME", $"{lesson.Title}, {_studentName}!", $"Hello, {_studentName}! Today’s mission is {lesson.Topic}.", $"سلام {_studentName}! مأموریت امروز درباره {lesson.Topic} است.", "hello", "Antworte Ravi mit einer englischen Begrüßung."),
-            new("02 · VOCABULARY", "New words", lesson.Words, lesson.WordsFarsi, lesson.Words.Split('·')[0].Trim(), "Schreibe eines der neuen englischen Wörter."),
-            new("03 · ENGLISH → FARSI", "Translate", lesson.Words, lesson.WordsFarsi, lesson.WordsFarsi.Split('·')[0].Trim(), "Übersetze das erste englische Wort ins Persische."),
-            new("04 · FARSI → ENGLISH", "Translate back", lesson.WordsFarsi, lesson.Words, lesson.Words.Split('·')[0].Trim(), "Übersetze das erste persische Wort ins Englische."),
+            new("01 · WELCOME", $"{lesson.Title}, {_studentName}!", $"Hello, {_studentName}! Today’s mission is {lesson.Topic}.", $"سلام {_studentName}! مأموریت امروز درباره {lesson.Topic} است.", "hello", "Write an English greeting to Ravi."),
+            new("02 · VOCABULARY", "New vocabulary", lesson.Words, lesson.WordsFarsi, lesson.Words.Split('·')[0].Trim(), "Tap each speaker, listen, and learn every word."),
+            new("03 · ENGLISH → FARSI", "English to Persian", lesson.Words, lesson.WordsFarsi, lesson.WordsFarsi.Split('·')[0].Trim(), "Translate the first English word into Persian."),
+            new("04 · FARSI → ENGLISH", "Persian to English", lesson.WordsFarsi, lesson.Words, lesson.Words.Split('·')[0].Trim(), "Translate the first Persian word into English."),
             new("05 · STORY", "Ravi’s continuing adventure", story, storyFarsi, lesson.Expected, lesson.Question),
-            new("06 · GRAMMAR", lesson.Grammar, $"Personal example: {_studentName} is {_ageText} years old. {subjectTitle} is Ravi’s friend.", $"مثال شخصی: {_studentName} {_ageText} سال دارد. او دوست راوی است.", subject, $"Complete with he or she: {_studentName} is my friend. ___ is {_ageText}."),
+            new("06 · GRAMMAR", lesson.Grammar, $"Example: {_studentName} is {_ageText} years old. {subjectTitle} is Ravi’s friend. Read the rule, then complete the sentence below.", $"مثال: {_studentName} {_ageText} سال دارد. او دوست راوی است.", subject, $"Complete with he or she: {_studentName} is my friend. ___ is {_ageText}."),
             new("07 · LISTENING", "Listen without reading first", story, storyFarsi, lesson.Expected, lesson.Question),
-            new("08 · DICTATION", "Listen and write", $"{_studentName} is Ravi’s friend.", $"{_studentName} دوست راوی است.", _studentName, "Schreibe den gehörten englischen Satz."),
+            new("08 · DICTATION", "Listen and write", $"{_studentName} is Ravi’s friend.", $"{_studentName} دوست راوی است.", _studentName, "Listen without reading, then write the English sentence."),
             new("09 · WRITING", "Your turn", $"Write two sentences about {lesson.Topic.ToLowerInvariant()}. Ravi gives {obj} a golden leaf for a complete answer.", $"دو جمله درباره موضوع درس بنویس. راوی برای پاسخ کامل یک برگ طلایی می‌دهد.", _studentName, $"Begin with: My name is {_studentName}."),
             new("10 · LESSON EXAM", "Ravi’s Challenge", $"Exam: vocabulary, English↔Farsi, grammar, listening, dictation, reading and writing. Pass mark: 60%. Story question: {lesson.Question}", $"آزمون: واژگان، ترجمه دوطرفه، دستور زبان، شنیداری، املا، خواندن و نوشتن. حد قبولی: ۶۰٪", lesson.Expected, lesson.Question),
-            new("11 · REWARD", $"Well done, {_studentName}!", $"You completed {lesson.Title}. Reward: up to 3 stars, 50 golden leaves and a Ravi badge.", $"آفرین {_studentName}! این درس را تمام کردی. جایزه: تا سه ستاره، ۵۰ برگ طلایی و نشان راوی.", "ravi", "Schreibe: Thank you, Ravi!"),
+            new("11 · REWARD", $"Well done, {_studentName}!", $"You completed {lesson.Title}. Reward: up to 3 stars, 50 golden leaves and a Ravi badge.", $"آفرین {_studentName}! این درس را تمام کردی. جایزه: تا سه ستاره، ۵۰ برگ طلایی و نشان راوی.", "ravi", "Write: Thank you, Ravi!"),
         ];
     }
 
@@ -193,20 +198,36 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         var review = _grade == 8 ? "nationality · routines · abilities · health · places · weather · hobbies" : "greetings · family · appearance · home · time · food";
         return
         [
-            new("FINAL · INTRO", $"Grade {_grade} Final Mission", $"{_studentName}, this exam reviews all lessons from {gradeName}. You pass with 60%.", $"{_studentName}، این آزمون همه درس‌های این پایه را مرور می‌کند. حد قبولی ۶۰٪ است.", "ready", "Schreibe: I am ready."),
-            new("01 · VOCABULARY", "Vocabulary review", review, "مرور واژگان همه درس‌ها", review.Split('·')[0].Trim(), "Schreibe das erste Thema auf Englisch."),
-            new("02 · TRANSLATION", "English → Farsi", $"Translate three sentences from the Grade {_grade} story world.", "سه جمله از دنیای داستانی این پایه را ترجمه کن.", "ravi", "Übersetze: Ravi is my friend."),
-            new("03 · TRANSLATION", "Farsi → English", "راوی دوست من است.", "Ravi is my friend.", "ravi", "Übersetze den persischen Satz ins Englische."),
+            new("FINAL · INTRO", $"Grade {_grade} Final Mission", $"{_studentName}, this exam reviews all lessons from {gradeName}. You pass with 60%.", $"{_studentName}، این آزمون همه درس‌های این پایه را مرور می‌کند. حد قبولی ۶۰٪ است.", "ready", "Write: I am ready."),
+            new("01 · VOCABULARY", "Vocabulary review", review, "مرور واژگان همه درس‌ها", review.Split('·')[0].Trim(), "Write the first topic in English."),
+            new("02 · TRANSLATION", "English → Persian", $"Translate three sentences from the Grade {_grade} story world.", "سه جمله از دنیای داستانی این پایه را ترجمه کن.", "ravi", "Translate: Ravi is my friend."),
+            new("03 · TRANSLATION", "Persian → English", "راوی دوست من است.", "Ravi is my friend.", "ravi", "Translate the Persian sentence into English."),
             new("04 · GRAMMAR", "Grammar review", $"Use the grammar from every Grade {_grade} lesson in new situations.", "از دستور زبان همه درس‌های این پایه در موقعیت‌های جدید استفاده کن.", IsGirl ? "she" : "he", $"Complete: {_studentName} is my friend. ___ is {_ageText}."),
             new("05 · LISTENING", "Listening mission", $"Ravi and {_studentName} open the final door and find a certificate.", $"راوی و {_studentName} در آخر را باز می‌کنند و یک گواهی پیدا می‌کنند.", "certificate", "What do they find?"),
-            new("06 · DICTATION", "Final dictation", $"I finished Grade {_grade} with Ravi.", $"من پایه {_grade} را با راوی تمام کردم.", $"grade {_grade}", "Schreibe den gehörten Satz."),
+            new("06 · DICTATION", "Final dictation", $"I finished Grade {_grade} with Ravi.", $"من پایه {_grade} را با راوی تمام کردم.", $"grade {_grade}", "Write the sentence you hear."),
             new("07 · READING", "Story comprehension", $"After many missions, {_studentName} returns every clue to Ravi. The Golden Acorn shines and the next learning world opens.", $"پس از مأموریت‌های بسیار، {_studentName} همه سرنخ‌ها را به راوی برمی‌گرداند. بلوط طلایی می‌درخشد و دنیای آموزشی بعدی باز می‌شود.", "acorn", "What shines?"),
             new("08 · WRITING", "Final writing", $"Write four sentences about yourself and your adventure with Ravi.", "چهار جمله درباره خودت و ماجراجویی‌ات با راوی بنویس.", _studentName, "Include your name, age, one thing you like and one thing you learned."),
-            new("RESULT", $"Grade {_grade} Certificate", $"Congratulations, {_studentName}! A score of 60% unlocks the next grade. Your certificate records vocabulary, grammar, listening, reading and writing results.", $"تبریک {_studentName}! نمره ۶۰٪ پایه بعدی را باز می‌کند. نتیجه مهارت‌های مختلف در گواهی ثبت می‌شود.", "thank", "Schreibe: Thank you, Ravi!"),
+            new("RESULT", $"Grade {_grade} Certificate", $"Congratulations, {_studentName}! A score of 60% unlocks the next grade. Your certificate records vocabulary, grammar, listening, reading and writing results.", $"تبریک {_studentName}! نمره ۶۰٪ پایه بعدی را باز می‌کند. نتیجه مهارت‌های مختلف در گواهی ثبت می‌شود.", "thank", "Write: Thank you, Ravi!"),
         ];
     }
 
     private string Personalize(string text) => text.Replace("{name}", _studentName, StringComparison.Ordinal);
+    private string BuildStory(LessonDefinition lesson)
+    {
+        if (lesson.Number == "01" && _grade == 7)
+            return $"Ravi is standing near a school when he sees {_studentName}. “Hello, {_studentName}!” says Ravi. {_studentName} smiles and says, “Good morning!” Suddenly, a blue door appears under an old tree. Ravi finds a golden key in the grass. “Are you ready for an adventure?” he asks. Together, they walk toward the mysterious door.";
+
+        var words = lesson.Words.Split('·', StringSplitOptions.TrimEntries);
+        return $"{Personalize(lesson.Story)} Ravi and {_studentName} stop and look carefully. They notice the words {string.Join(", ", words.Take(3))} on the next clue. Ravi reads the clue aloud, and {_studentName} chooses the path forward. Their English adventure continues.";
+    }
+
+    private string BuildStoryFarsi(LessonDefinition lesson)
+    {
+        if (lesson.Number == "01" && _grade == 7)
+            return $"راوی نزدیک مدرسه ایستاده است که {_studentName} را می‌بیند. راوی می‌گوید: «سلام {_studentName}!» {_studentName} لبخند می‌زند و می‌گوید: «صبح بخیر!» ناگهان زیر یک درخت قدیمی دری آبی ظاهر می‌شود. راوی کلیدی طلایی در چمن پیدا می‌کند. او می‌پرسد: «برای یک ماجراجویی آماده‌ای؟» آن‌ها با هم به سوی در اسرارآمیز می‌روند.";
+
+        return $"{Personalize(lesson.StoryFarsi)} راوی و {_studentName} با دقت به سرنخ بعدی نگاه می‌کنند. راوی سرنخ را با صدای بلند می‌خواند و {_studentName} مسیر بعدی را انتخاب می‌کند. ماجراجویی انگلیسی آن‌ها ادامه پیدا می‌کند.";
+    }
     private void Next() { if (_stepIndex < _steps.Length - 1) _stepIndex++; else _screen = "Lessons"; ResetExercise(); }
     private void Back() { _screen = _screen switch { "Learning" => "Lessons", "Lessons" => "Grades", "Grades" => "Profile", "Profile" => "Login", _ => "Login" }; NotifyAll(); }
 
@@ -214,12 +235,26 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     {
         var expected = CurrentStep.Expected;
         _feedback = _answer.Trim().Contains(expected, StringComparison.OrdinalIgnoreCase)
-            ? $"Richtig, {_studentName}! Ravi ist stolz auf dich ✨"
-            : $"Fast, {_studentName}! Ravi hilft dir: Die Antwort enthält „{expected}“.";
+            ? $"Correct, {_studentName}! Ravi is proud of you ✨"
+            : $"Almost, {_studentName}! Ravi’s hint: your answer includes “{expected}”.";
         NotifyAll();
     }
 
-    private void ResetExercise() { _answer = string.Empty; _feedback = string.Empty; _showTranslation = false; NotifyAll(); }
+    private void ResetExercise()
+    {
+        _answer = string.Empty;
+        _feedback = string.Empty;
+        _showTranslation = false;
+        VocabularyItems.Clear();
+        if (IsVocabularyStep)
+        {
+            var english = CurrentStep.Content.Split('·', StringSplitOptions.TrimEntries);
+            var persian = CurrentStep.Translation.Split('·', StringSplitOptions.TrimEntries);
+            for (var index = 0; index < Math.Min(english.Length, persian.Length); index++)
+                VocabularyItems.Add(new(index + 1, english[index], persian[index]));
+        }
+        NotifyAll();
+    }
     private void NotifyAll() => OnPropertyChanged(string.Empty);
     private void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new(name));
 
@@ -231,3 +266,4 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 }
 
 public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam);
+public sealed record VocabularyItem(int Number, string English, string Persian);

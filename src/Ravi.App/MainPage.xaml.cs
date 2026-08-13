@@ -65,4 +65,14 @@ public partial class MainPage : ContentPage
             await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english });
         }
     }
+
+    private async void SpeakWordClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button { BindingContext: VocabularyItem word })
+        {
+            var locales = await TextToSpeech.Default.GetLocalesAsync();
+            var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
+            await TextToSpeech.Default.SpeakAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.85f });
+        }
+    }
 }
