@@ -19,6 +19,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     private string _profileError = string.Empty;
     private string _currentLessonNumber = string.Empty;
     private LessonStep[] _steps = [];
+    public bool LastAnswerCorrect { get; private set; }
 
     private static readonly VocabularyItem[] Grade7Lesson1Vocabulary =
     [
@@ -122,6 +123,8 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public bool IsGrades => _screen == "Grades";
     public bool IsLessons => _screen == "Lessons";
     public bool IsLearning => _screen == "Learning";
+    public string ScreenKey => _screen;
+    public int StepIndex => _stepIndex;
     public bool ShowBack => !IsLogin;
     public bool HasProfileError => !string.IsNullOrWhiteSpace(_profileError);
     public bool IsGirl => _gender == "Girl";
@@ -372,6 +375,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     {
         var expected = CurrentStep.Expected;
         var isCorrect = _answer.Trim().Contains(expected, StringComparison.OrdinalIgnoreCase);
+        LastAnswerCorrect = isCorrect;
         _feedback = _grade == 7
             ? isCorrect
                 ? $"آفرین {_studentName}! پاسخ درست است و راوی به تو افتخار می‌کند."

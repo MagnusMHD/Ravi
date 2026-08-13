@@ -1,4 +1,5 @@
 using Ravi.App.ViewModels;
+using System.ComponentModel;
 
 namespace Ravi.App;
 
@@ -6,8 +7,36 @@ public partial class MainPage : ContentPage
 {
     private CancellationTokenSource? _animationCancellation;
     private CancellationTokenSource? _speechCancellation;
+    private string _lastScreen = "Login";
+    private int _lastStep = -1;
 
-    public MainPage() { InitializeComponent(); BindingContext = new HomeViewModel(); }
+    public MainPage()
+    {
+        InitializeComponent();
+        var viewModel = new HomeViewModel();
+        viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        BindingContext = viewModel;
+    }
+
+    private async void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not HomeViewModel vm)
+            return;
+
+        if (_lastScreen != vm.ScreenKey)
+        {
+            _lastScreen = vm.ScreenKey;
+            await AnimatePageTransitionAsync();
+        }
+        else if (vm.IsLearning && _lastStep != vm.StepIndex)
+        {
+            _lastStep = vm.StepIndex;
+            await AnimateLessonTransitionAsync();
+        }
+
+        if (e.PropertyName is null or "" && vm.HasFeedback)
+            await AnimateFeedbackAsync(vm.LastAnswerCorrect);
+    }
 
     protected override void OnAppearing()
     {
@@ -26,7 +55,7 @@ public partial class MainPage : ContentPage
 
     private async Task AnimateRaviAsync(CancellationToken cancellationToken)
     {
-        var characters = new[] { RaviMascot, RaviProfile, RaviCourse, RaviLesson };
+        var characters = new[] { RaviMascot, RaviProfile, RaviCourse };
         try
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -63,7 +92,7 @@ public partial class MainPage : ContentPage
         {
             var locales = await TextToSpeech.Default.GetLocalesAsync();
             var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-            await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.62f });
+            await SpeakWithRaviAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.62f });
         }
     }
 
@@ -73,7 +102,7 @@ public partial class MainPage : ContentPage
         {
             var locales = await TextToSpeech.Default.GetLocalesAsync();
             var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-            await TextToSpeech.Default.SpeakAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.58f });
+            await SpeakWithRaviAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.58f });
         }
     }
 
@@ -91,7 +120,7 @@ public partial class MainPage : ContentPage
 
         var locales = await TextToSpeech.Default.GetLocalesAsync();
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-        await TextToSpeech.Default.SpeakAsync(text, new SpeechOptions { Locale = english, Rate = 0.60f });
+        await SpeakWithRaviAsync(text, new SpeechOptions { Locale = english, Rate = 0.60f });
     }
 
     private async void StoryTapped(object? sender, TappedEventArgs e)
@@ -118,7 +147,7 @@ public partial class MainPage : ContentPage
                     var options = isDialogue
                         ? new SpeechOptions { Locale = english, Rate = 0.40f, Pitch = dialogueIndex++ % 2 == 0 ? 0.82f : 1.12f }
                         : new SpeechOptions { Locale = english, Rate = 0.34f, Pitch = 0.96f };
-                    await TextToSpeech.Default.SpeakAsync(text, options, token);
+                    await SpeakWithRaviAsync(text, options, token);
                     await Task.Delay(isDialogue ? 600 : 400, token);
                 }
                 await Task.Delay(1200, token);
@@ -155,5 +184,75 @@ public partial class MainPage : ContentPage
             remaining = remaining[(closing + 1)..];
         }
         return result.Where(item => !string.IsNullOrWhiteSpace(item.Text)).ToList();
+    }
+
+    private async Task SpeakWithRaviAsync(string text, SpeechOptions options, CancellationToken cancellationToken = default)
+    {
+        using var animationCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var pulse = AnimateSpeakingAsync(animationCancellation.Token);
+        try
+        {
+            await TextToSpeech.Default.SpeakAsync(text, options, cancellationToken);
+        }
+        finally
+        {
+            animationCancellation.Cancel();
+            try { await pulse; } catch (OperationCanceledException) { }
+            RaviLesson.CancelAnimations();
+            RaviLesson.Scale = 1;
+            RaviLesson.TranslationY = 0;
+        }
+    }
+
+    private async Task AnimateSpeakingAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            await RaviLesson.ScaleToAsync(1.025, 280, Easing.SinInOut);
+            await RaviLesson.TranslateToAsync(0, -3, 260, Easing.SinInOut);
+            await RaviLesson.ScaleToAsync(1, 280, Easing.SinInOut);
+            await RaviLesson.TranslateToAsync(0, 0, 260, Easing.SinInOut);
+        }
+    }
+
+    private async Task AnimatePageTransitionAsync()
+    {
+        PageContent.CancelAnimations();
+        PageContent.Opacity = 0;
+        PageContent.TranslationY = 12;
+        await Task.WhenAll(
+            PageContent.FadeToAsync(1, 260, Easing.CubicOut),
+            PageContent.TranslateToAsync(0, 0, 320, Easing.CubicOut));
+    }
+
+    private async Task AnimateLessonTransitionAsync()
+    {
+        LearningContent.CancelAnimations();
+        LearningContent.Opacity = 0.35;
+        LearningContent.TranslationX = 10;
+        await Task.WhenAll(
+            LearningContent.FadeToAsync(1, 220, Easing.CubicOut),
+            LearningContent.TranslateToAsync(0, 0, 260, Easing.CubicOut));
+    }
+
+    private async Task AnimateFeedbackAsync(bool isCorrect)
+    {
+        FeedbackCard.CancelAnimations();
+        RaviLesson.CancelAnimations();
+        if (isCorrect)
+        {
+            await Task.WhenAll(
+                FeedbackCard.ScaleToAsync(1.015, 150, Easing.CubicOut),
+                RaviLesson.TranslateToAsync(0, -10, 180, Easing.CubicOut));
+            await Task.WhenAll(
+                FeedbackCard.ScaleToAsync(1, 220, Easing.CubicOut),
+                RaviLesson.TranslateToAsync(0, 0, 260, Easing.CubicOut));
+        }
+        else
+        {
+            await RaviLesson.TranslateToAsync(-5, 0, 90, Easing.Linear);
+            await RaviLesson.TranslateToAsync(5, 0, 90, Easing.Linear);
+            await RaviLesson.TranslateToAsync(0, 0, 110, Easing.CubicOut);
+        }
     }
 }

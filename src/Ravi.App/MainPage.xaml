@@ -60,7 +60,7 @@
         </Grid>
 
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="28,30,28,56" Spacing="22" MaximumWidthRequest="820" HorizontalOptions="Center">
+            <VerticalStackLayout x:Name="PageContent" Padding="28,30,28,56" Spacing="22" MaximumWidthRequest="820" HorizontalOptions="Center">
 
                 <!-- Start -->
                 <VerticalStackLayout IsVisible="{Binding IsLogin}" Spacing="16" HorizontalOptions="Center" MaximumWidthRequest="520">
@@ -182,7 +182,7 @@
                 </VerticalStackLayout>
 
                 <!-- Learning -->
-                <VerticalStackLayout IsVisible="{Binding IsLearning}" Spacing="17">
+                <VerticalStackLayout x:Name="LearningContent" IsVisible="{Binding IsLearning}" Spacing="17">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout><Label Text="{Binding StepEyebrow}" Style="{StaticResource SectionLabel}" /><Label Text="{Binding ProgressLabel}" TextColor="#758197" FontSize="12" /></VerticalStackLayout>
                         <Label Grid.Column="1" Text="LESSON IN PROGRESS" TextColor="#D4612D" FontSize="10" CharacterSpacing="1.2" FontAttributes="Bold" />
@@ -274,7 +274,7 @@
                         </Border>
                     </VerticalStackLayout>
 
-                    <Border Style="{StaticResource Card}" IsVisible="{Binding ShowExercise}">
+                    <Border x:Name="FeedbackCard" Style="{StaticResource Card}" IsVisible="{Binding ShowExercise}">
                         <VerticalStackLayout Spacing="12">
                             <Grid ColumnDefinitions="*,70">
                                 <Label Text="تمرین با راوی" FlowDirection="RightToLeft" TextColor="#078F91" FontAttributes="Bold" HorizontalTextAlignment="End" VerticalOptions="Center" />
