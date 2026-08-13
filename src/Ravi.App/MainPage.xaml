@@ -180,7 +180,8 @@
                     </FlexLayout>
                     </VerticalStackLayout>
                     <Grid Grid.Column="1">
-                        <Image Source="ravi_ui.png" HeightRequest="600" Aspect="AspectFit" VerticalOptions="End" />
+                        <Image Source="ravi_courses.jpg" Aspect="AspectFill" />
+                        <BoxView Color="#33090D12" />
                         <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,0,100">
                             <VerticalStackLayout Spacing="3"><Label Text="YOUR PATH" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" /><Label Text="Choose your grade." TextColor="#F3F4F5" FontSize="15" FontAttributes="Bold" /></VerticalStackLayout>
                         </Border>
@@ -237,7 +238,8 @@
                     </VerticalStackLayout>
                     </VerticalStackLayout>
                     <Grid Grid.Column="1">
-                        <Image x:Name="RaviCourse" Source="ravi_ui.png" HeightRequest="600" Aspect="AspectFit" VerticalOptions="End"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
+                        <Image x:Name="RaviCourse" Source="ravi_courses.jpg" Aspect="AspectFill"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
+                        <BoxView Color="#33090D12" />
                         <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,0,100">
                             <VerticalStackLayout Spacing="3"><Label Text="NEXT MISSION" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" /><Label Text="Pick a lesson to begin." TextColor="#F3F4F5" FontSize="15" FontAttributes="Bold" /></VerticalStackLayout>
                         </Border>
@@ -353,8 +355,9 @@
                     </Border>
                     <Button Text="{Binding NextLabel}" Command="{Binding NextCommand}" Style="{StaticResource Primary}" />
                 </VerticalStackLayout>
-                <Grid Grid.Column="1" VerticalOptions="Start" Margin="0,72,0,0">
-                    <Image x:Name="RaviLesson" Source="ravi_ui.png" HeightRequest="520" Aspect="AspectFit" VerticalOptions="Start"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
+                <Grid Grid.Column="1" VerticalOptions="Fill" Margin="0,72,0,0" MinimumHeightRequest="560">
+                    <Image x:Name="RaviLesson" Source="{Binding RaviLessonArtwork}" Aspect="AspectFill"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
+                    <BoxView Color="#26090D12" />
                     <Border x:Name="RaviSpeakingBadge" BackgroundColor="#252B32" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="14,8" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0"><Label Text="RAVI IS SPEAKING" TextColor="White" FontSize="10" FontAttributes="Bold" CharacterSpacing="1" /></Border>
                     <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="18,13" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,0,36">
                         <VerticalStackLayout Spacing="3"><Label Text="RAVI GUIDE" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" /><Label Text="One clear step at a time." TextColor="#F3F4F5" FontSize="14" FontAttributes="Bold" /></VerticalStackLayout>

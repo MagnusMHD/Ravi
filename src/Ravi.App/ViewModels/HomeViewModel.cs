@@ -145,6 +145,19 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public string StepTitle => CurrentStep.Title;
     public string StepContent => CurrentStep.Content;
     public string StepTranslation => _showTranslation ? CurrentStep.Translation : "Show Persian translation  فارسی";
+    public string RaviLessonArtwork
+    {
+        get
+        {
+            var eyebrow = CurrentStep.Eyebrow;
+            if (IsVocabularyStep || IsPhraseStep) return "ravi_vocabulary.jpg";
+            if (IsStoryStep || eyebrow.Contains("READING", StringComparison.Ordinal)) return "ravi_story.jpg";
+            if (eyebrow.Contains("GRAMMAR", StringComparison.Ordinal)) return "ravi_grammar.jpg";
+            if (eyebrow.Contains("LISTENING", StringComparison.Ordinal) || eyebrow.Contains("DICTATION", StringComparison.Ordinal) || eyebrow.Contains("SPEAKING", StringComparison.Ordinal)) return "ravi_listening.jpg";
+            if (eyebrow.Contains("WRITING", StringComparison.Ordinal)) return "ravi_writing.jpg";
+            return "ravi_courses.jpg";
+        }
+    }
     public string StoryTranslation => CurrentStep.Translation;
     public string StoryOpeningImage => IsGirl ? "lesson1_secret_door.jpg" : "lesson1_secret_door_boy.jpg";
     public string StoryEndingImage => IsGirl ? "lesson1_magic_passage.jpg" : "lesson1_magic_passage_boy.jpg";
