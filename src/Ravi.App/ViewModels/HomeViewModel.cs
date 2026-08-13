@@ -156,6 +156,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public bool IsVocabularyStep => CurrentStep.Eyebrow.EndsWith("VOCABULARY", StringComparison.Ordinal);
     public bool IsPhraseStep => _grade == 7 && _currentLessonNumber == "01" && CurrentStep.Eyebrow.StartsWith("02 · PRONUNCIATION", StringComparison.Ordinal);
     public bool IsStoryStep => CurrentStep.Eyebrow.Contains("STORY", StringComparison.Ordinal);
+    public bool IsLessonOneStory => IsStoryStep && _grade == 7 && _currentLessonNumber == "01";
     public bool IsRegularStep => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
     public bool ShowExercise => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
     public bool HasTranslation => !string.IsNullOrWhiteSpace(CurrentStep.Translation);
@@ -293,8 +294,8 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         if (lesson.Number == "01" && _grade == 7)
             return $"Ravi is standing near a school when he sees {_studentName}. “Hello, {_studentName}!” says Ravi. {_studentName} smiles and says, “Good morning!” Suddenly, a blue door appears under an old tree. Ravi finds a golden key in the grass. “Are you ready for an adventure?” he asks. Together, they walk toward the mysterious door.";
 
-        var words = lesson.Words.Split('·', StringSplitOptions.TrimEntries);
-        return $"{Personalize(lesson.Story)} Ravi and {_studentName} stop and look carefully. They notice the words {string.Join(", ", words.Take(3))} on the next clue. Ravi reads the clue aloud, and {_studentName} chooses the path forward. Their English adventure continues.";
+        var (challenge, choice, ending) = GetStoryBeats(lesson.Number);
+        return $"{Personalize(lesson.Story)} The air shimmers, and a new part of the adventure begins.\n\n“Stay close, {_studentName},” says Ravi. {challenge}\n\n{_studentName} takes a careful breath. “I know what to do,” {_studentName} says. {choice}\n\n{ending} Ravi smiles and says, “Every English word helps us find the way.” Together, they follow the golden light toward their next adventure.";
     }
 
     private string BuildStoryFarsi(LessonDefinition lesson)
@@ -302,7 +303,67 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         if (lesson.Number == "01" && _grade == 7)
             return $"راوی نزدیک مدرسه ایستاده است که {_studentName} را می‌بیند. راوی می‌گوید: «سلام {_studentName}!» {_studentName} لبخند می‌زند و می‌گوید: «صبح بخیر!» ناگهان زیر یک درخت قدیمی دری آبی ظاهر می‌شود. راوی کلیدی طلایی در چمن پیدا می‌کند. او می‌پرسد: «برای یک ماجراجویی آماده‌ای؟» آن‌ها با هم به سوی در اسرارآمیز می‌روند.";
 
-        return $"{Personalize(lesson.StoryFarsi)} راوی و {_studentName} با دقت به سرنخ بعدی نگاه می‌کنند. راوی سرنخ را با صدای بلند می‌خواند و {_studentName} مسیر بعدی را انتخاب می‌کند. ماجراجویی انگلیسی آن‌ها ادامه پیدا می‌کند.";
+        var (challenge, choice, ending) = GetStoryBeatsFarsi(lesson.Number);
+        return $"{Personalize(lesson.StoryFarsi)} هوا می‌درخشد و بخش تازه‌ای از ماجراجویی آغاز می‌شود.\n\nراوی می‌گوید: «نزدیک من بمان، {_studentName}.» {challenge}\n\n{_studentName} نفس عمیقی می‌کشد و می‌گوید: «می‌دانم چه کار کنم.» {choice}\n\n{ending} راوی لبخند می‌زند و می‌گوید: «هر واژه انگلیسی کمک می‌کند راه را پیدا کنیم.» آن‌ها با هم نور طلایی را تا ماجراجویی بعدی دنبال می‌کنند.";
+    }
+
+    private (string Challenge, string Choice, string Ending) GetStoryBeats(string number) => (_grade, number) switch
+    {
+        (7, "02") => ("A nervous new student stands at the classroom door, unable to say his name.", $"{_studentName} slowly spells the name, and Ravi repeats every letter with him.", "The student finally introduces himself, and the class welcomes him warmly."),
+        (7, "03") => ("Nika and Amir are waiting, but a magical mist has hidden the name cards on their desks.", $"{_studentName} introduces each classmate, and every correct name makes one card glow.", "The mist disappears, and the three classmates shake hands."),
+        (7, "04") => ("The classroom door locks, and a riddle on the board asks them to find five school objects.", $"{_studentName} names the book, pen, pencil, desk and board while Ravi searches carefully.", "Under the last book, they discover Ravi’s warm golden key."),
+        (7, "05") => ("The calendar pages spin so quickly that Ravi cannot see the glowing birthday.", $"{_studentName} says the age, month and date aloud, and the pages begin to slow down.", "The correct birthday shines like a small star and reveals a silver number."),
+        (7, "06") => ("Seven stepping-stones appear above a dark stream, one for each day of the week.", $"{_studentName} names the days in order while Ravi jumps from stone to stone.", "On the final stone, Monday’s clue opens like a tiny golden flower."),
+        (7, "07") => ("A family portrait has lost four faces, and the empty spaces whisper for their names.", $"{_studentName} identifies the mother, father, sister and brother as Ravi holds the frame.", "The family picture becomes whole again, and Nika’s home fills with light."),
+        (7, "08") => ("Five visitors offer help, but only one knows the route above the clouds.", $"{_studentName} asks about every job until the pilot steps forward with a folded map.", "The pilot opens the map, and a golden path appears across the sky."),
+        (7, "09") => ("A red thread races through the market, slipping beneath shoes and around blue doors.", $"{_studentName} describes every colour and item of clothing while Ravi follows the moving thread.", "The thread leads them to the missing red scarf caught on a rose bush."),
+        (7, "10") => ("The market is crowded, and three people match part of the witness’s description.", $"{_studentName} carefully describes height, age and hair until Ravi recognises the right person.", "The tall woman remembers a small house at the end of the street."),
+        (7, "11") => ("Inside the quiet house, each room changes place whenever they choose the wrong door.", $"{_studentName} uses in, on, under and next to to guide Ravi through the rooms.", "Behind a chair in the secret room, the golden thread begins to glow."),
+        (7, "12") => ("Everyone in the house is busy, but a moving golden light is trying to escape upstairs.", $"{_studentName} tells Ravi who is reading, cooking, washing and playing right now.", "They reach the stairs just as the light turns into a shining address card."),
+        (7, "13") => ("Rain has washed three numbers from Ravi’s address, leaving only a street name.", $"{_studentName} compares the telephone numbers on nearby doors and restores the missing digits.", "The completed address points toward an old clock tower across the square."),
+        (7, "14") => ("The clock hands spin backwards, and the tower door will open at only one exact time.", $"{_studentName} listens to each bell and calls out five o’clock when the hands align.", "The golden key turns, and warm evening light pours from the tower."),
+        (7, "15") => ("Ravi is hungry, but the picnic basket opens only for a kind and complete request.", $"{_studentName} politely asks for bread, fruit and juice, then shares the food with Ravi.", "At the bottom of the basket, they find the final piece of the golden map."),
+        (7, "16") => ("The last door has no handle; it is covered with pictures from every earlier mission.", $"{_studentName} remembers the clues, names the objects and completes the final sentences.", "The pictures join together, the door opens, and the Golden Acorn rises into Ravi’s hands."),
+        (8, "01") => ("The invitation has no country written on it, only four coloured stamps.", $"{_studentName} identifies Iran, France, China and Spain while Ravi studies the map.", "The stamps form a compass pointing toward an international festival."),
+        (8, "02") => ("Four students speak at once, and the welcome board has mixed up their nationalities.", $"{_studentName} listens to each language and matches every student to the correct country.", "The board lights up, and all four students teach Ravi a friendly greeting."),
+        (8, "03") => ("Before sunrise, Ravi discovers that the festival map has vanished from his desk.", $"{_studentName} retraces Ravi’s morning routine from waking up to leaving for school.", "A breakfast crumb leads them to a note hidden beside the empty map case."),
+        (8, "04") => ("The note contains a weekly plan, but its days drift around like loose puzzle pieces.", $"{_studentName} rebuilds the schedule and finds the marked Wednesday afternoon.", "At that exact time, a silver arrow appears on the classroom window."),
+        (8, "05") => ("The arrow points above a high wall where a hidden sign flashes in the wind.", $"{_studentName} reads the sign while Ravi uses his strong paws to climb safely.", "Together they copy the message before the glowing letters disappear."),
+        (8, "06") => ("A silver box asks for three different abilities before it will unlock.", $"{_studentName} organises the friends: one draws, one reads and Ravi climbs to press the final symbol.", "The team succeeds, and the box opens with a clear musical note."),
+        (8, "07") => ("The message inside is so tiny that Ravi reads too long and develops a painful headache.", $"{_studentName} notices Ravi’s tired eyes and asks exactly what is wrong.", "Ravi admits he needs help, and they carry the message to a quiet room."),
+        (8, "08") => ("Ravi wants to continue immediately, although his head still hurts.", $"{_studentName} gives sensible advice: drink water, rest and ask a doctor if the pain continues.", "After a peaceful rest, Ravi feels better and thanks his thoughtful friend."),
+        (8, "09") => ("The recovered message shows five city places, but only one hides the next clue.", $"{_studentName} compares the museum, mosque, park, metro and city centre on the map.", "A golden museum symbol begins to pulse in the centre of the city."),
+        (8, "10") => ("Busy streets turn the map around, and Ravi can no longer tell east from west.", $"{_studentName} asks a local guide for directions and follows the route toward the west.", "Beyond the final corner, a famous old bridge appears above the river."),
+        (8, "11") => ("Across the bridge, fog hides a mountain village and the path divides near a forest.", $"{_studentName} follows the sound of the river while Ravi watches the fields for landmarks.", "The fog lifts, revealing warm village lights beneath the mountain."),
+        (8, "12") => ("Sun, rain and wind change within minutes, scattering papers around the village square.", $"{_studentName} describes each change in the weather while Ravi catches the flying pages.", "A strong gust lifts a bench cover and reveals the missing festival map."),
+        (8, "13") => ("The map is torn, and each missing piece belongs to someone with a different hobby.", $"{_studentName} asks about reading, drawing, music and collecting until every piece returns.", "Ravi joins the pieces and discovers a route shaped like an open book."),
+        (8, "14") => ("At the festival gate, the map asks how the friends spend their free time together.", $"{_studentName} describes walking, playing, listening to music and visiting the shops.", "The gate opens, music fills the square, and Ravi returns the map to its grateful owner."),
+        _ => ("A hidden clue begins to glow, but its meaning is not clear.", $"{_studentName} uses the new words to help Ravi understand the message.", "The clue opens a safe path forward."),
+    };
+
+    private (string Challenge, string Choice, string Ending) GetStoryBeatsFarsi(string number)
+    {
+        var english = GetStoryBeats(number);
+        return (_grade, number) switch
+        {
+            (7, "02") => ("دانش‌آموزی خجالتی کنار در کلاس ایستاده و نمی‌تواند نامش را بگوید.", $"{_studentName} نام را آهسته هجی می‌کند و راوی هر حرف را همراه او تکرار می‌کند.", "دانش‌آموز سرانجام خودش را معرفی می‌کند و کلاس با مهربانی از او استقبال می‌کند."),
+            (7, "03") => ("مهی جادویی کارت نام‌های روی میز نیکا و امیر را پنهان کرده است.", $"{_studentName} هر همکلاسی را معرفی می‌کند و با هر نام درست، یک کارت می‌درخشد.", "مه ناپدید می‌شود و سه همکلاسی با هم دست می‌دهند."),
+            (7, "04") => ("در کلاس قفل می‌شود و معمای روی تخته از آن‌ها می‌خواهد پنج وسیله مدرسه را پیدا کنند.", $"{_studentName} کتاب، خودکار، مداد، میز و تخته را نام می‌برد و راوی با دقت می‌گردد.", "زیر آخرین کتاب، کلید طلایی و گرم راوی را پیدا می‌کنند."),
+            (7, "05") => ("صفحه‌های تقویم آن‌قدر سریع می‌چرخند که راوی روز تولد درخشان را نمی‌بیند.", $"{_studentName} سن، ماه و تاریخ را بلند می‌گوید و صفحه‌ها آرام می‌شوند.", "تاریخ درست مانند ستاره می‌درخشد و یک عدد نقره‌ای را نشان می‌دهد."),
+            (7, "06") => ("هفت سنگ برای هفت روز هفته روی رودخانه‌ای تاریک ظاهر می‌شود.", $"{_studentName} روزها را به ترتیب می‌گوید و راوی از سنگی به سنگ دیگر می‌پرد.", "روی آخرین سنگ، سرنخ دوشنبه مانند گلی طلایی باز می‌شود."),
+            (7, "07") => ("چهار چهره از قاب خانوادگی ناپدید شده‌اند و جای خالی نام آن‌ها را می‌خواهد.", $"{_studentName} مادر، پدر، خواهر و برادر را معرفی می‌کند و راوی قاب را نگه می‌دارد.", "تصویر خانواده کامل می‌شود و خانه نیکا پر از نور می‌گردد."),
+            (7, "08") => ("پنج مهمان پیشنهاد کمک می‌دهند، اما فقط یکی راه بالای ابرها را می‌داند.", $"{_studentName} درباره شغل‌ها می‌پرسد تا خلبان با نقشه‌ای تاخورده جلو می‌آید.", "خلبان نقشه را باز می‌کند و راهی طلایی در آسمان ظاهر می‌شود."),
+            (7, "09") => ("نخی قرمز با سرعت از بازار می‌گذرد، زیر کفش‌ها و دور درهای آبی می‌پیچد.", $"{_studentName} رنگ‌ها و لباس‌ها را توصیف می‌کند و راوی نخ را دنبال می‌کند.", "نخ آن‌ها را به شال قرمز گمشده روی بوته گل می‌رساند."),
+            (7, "10") => ("بازار شلوغ است و سه نفر بخشی از توصیف شاهد را دارند.", $"{_studentName} قد، سن و مو را دقیق توصیف می‌کند تا راوی فرد درست را بشناسد.", "زن قدبلند خانه کوچکی در انتهای خیابان را به یاد می‌آورد."),
+            (7, "11") => ("در خانه ساکت، هر بار که در اشتباهی انتخاب می‌شود اتاق‌ها جابه‌جا می‌شوند.", $"{_studentName} با واژه‌های مکانی راوی را از اتاق‌ها عبور می‌دهد.", "پشت صندلی اتاق مخفی، نخ طلایی شروع به درخشیدن می‌کند."),
+            (7, "12") => ("همه در خانه مشغول‌اند، اما نور طلایی متحرکی می‌خواهد به طبقه بالا فرار کند.", $"{_studentName} می‌گوید چه کسی در حال خواندن، آشپزی، شستن و بازی است.", "در بالای پله‌ها، نور به کارت نشانی درخشانی تبدیل می‌شود."),
+            (7, "13") => ("باران سه عدد را از نشانی راوی پاک کرده و فقط نام خیابان باقی مانده است.", $"{_studentName} شماره‌های درهای اطراف را مقایسه و عددهای گمشده را کامل می‌کند.", "نشانی کامل به برج ساعت قدیمی آن سوی میدان اشاره می‌کند."),
+            (7, "14") => ("عقربه‌ها برعکس می‌چرخند و در برج فقط در یک ساعت دقیق باز می‌شود.", $"{_studentName} به زنگ‌ها گوش می‌دهد و هنگام تنظیم عقربه‌ها ساعت پنج را اعلام می‌کند.", "کلید طلایی می‌چرخد و نور گرم عصر از برج بیرون می‌ریزد."),
+            (7, "15") => ("راوی گرسنه است، اما سبد پیک‌نیک فقط با یک درخواست مؤدبانه باز می‌شود.", $"{_studentName} نان، میوه و آبمیوه می‌خواهد و غذا را با راوی تقسیم می‌کند.", "ته سبد، آخرین قطعه نقشه طلایی را پیدا می‌کنند."),
+            (7, "16") => ("در آخر دستگیره ندارد و با تصویر همه مأموریت‌های گذشته پوشیده شده است.", $"{_studentName} سرنخ‌ها را به یاد می‌آورد و جمله‌های نهایی را کامل می‌کند.", "تصویرها به هم می‌پیوندند، در باز می‌شود و بلوط طلایی در دست راوی قرار می‌گیرد."),
+            _ when _grade == 8 => ($"سرنخ تازه‌ای از ماجرای «{number}» ظاهر می‌شود و راه را مبهم می‌کند.", $"{_studentName} با واژه‌های تازه به راوی کمک می‌کند پیام را بفهمد و انتخاب درستی انجام دهد.", "آن‌ها مشکل را حل می‌کنند و سرنخ بعدی ماجرای جشنواره آشکار می‌شود."),
+            _ => ("سرنخی پنهان می‌درخشد، اما معنای آن روشن نیست.", $"{_studentName} با واژه‌های تازه به راوی کمک می‌کند.", "سرنخ راه امن بعدی را باز می‌کند."),
+        };
     }
     private void Next() { if (_stepIndex < _steps.Length - 1) _stepIndex++; else _screen = "Lessons"; ResetExercise(); }
     private void Back() { _screen = _screen switch { "Learning" => "Lessons", "Lessons" => "Grades", "Grades" => "Profile", "Profile" => "Login", _ => "Login" }; NotifyAll(); }

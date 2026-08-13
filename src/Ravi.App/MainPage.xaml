@@ -244,7 +244,7 @@
 
                     <!-- Storybook page: one continuous story with its translation opposite. -->
                     <VerticalStackLayout IsVisible="{Binding IsStoryStep}" Spacing="12">
-                        <Image Source="{Binding StoryOpeningImage}" HeightRequest="310" Aspect="AspectFill" />
+                        <Image Source="{Binding StoryOpeningImage}" IsVisible="{Binding IsLessonOneStory}" HeightRequest="310" Aspect="AspectFill" />
                         <Border Style="{StaticResource Card}" Padding="24">
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="28">
                                 <VerticalStackLayout Spacing="10">
@@ -259,7 +259,7 @@
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
-                        <Image Source="{Binding StoryEndingImage}" HeightRequest="280" Aspect="AspectFill" />
+                        <Image Source="{Binding StoryEndingImage}" IsVisible="{Binding IsLessonOneStory}" HeightRequest="280" Aspect="AspectFill" />
                     </VerticalStackLayout>
 
                     <!-- Story, grammar, listening, dictation and writing -->

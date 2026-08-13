@@ -5,6 +5,7 @@ namespace Ravi.App;
 public partial class MainPage : ContentPage
 {
     private CancellationTokenSource? _animationCancellation;
+    private CancellationTokenSource? _speechCancellation;
 
     public MainPage() { InitializeComponent(); BindingContext = new HomeViewModel(); }
 
@@ -100,13 +101,59 @@ public partial class MainPage : ContentPage
 
         var locales = await TextToSpeech.Default.GetLocalesAsync();
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-        var options = new SpeechOptions { Locale = english, Rate = 0.36f };
+        _speechCancellation?.Cancel();
+        _speechCancellation?.Dispose();
+        _speechCancellation = new CancellationTokenSource();
+        var token = _speechCancellation.Token;
         var paragraphs = vm.StepContent.Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        foreach (var paragraph in paragraphs)
+        try
         {
-            await TextToSpeech.Default.SpeakAsync(paragraph, options);
-            await Task.Delay(950);
+            foreach (var paragraph in paragraphs)
+            {
+                var segments = SplitNarrationAndDialogue(paragraph);
+                var dialogueIndex = 0;
+                foreach (var (text, isDialogue) in segments)
+                {
+                    var options = isDialogue
+                        ? new SpeechOptions { Locale = english, Rate = 0.40f, Pitch = dialogueIndex++ % 2 == 0 ? 0.82f : 1.12f }
+                        : new SpeechOptions { Locale = english, Rate = 0.34f, Pitch = 0.96f };
+                    await TextToSpeech.Default.SpeakAsync(text, options, token);
+                    await Task.Delay(isDialogue ? 600 : 400, token);
+                }
+                await Task.Delay(1200, token);
+            }
         }
+        catch (OperationCanceledException)
+        {
+            // A second tap starts the story again without overlapping voices.
+        }
+    }
+
+    private static List<(string Text, bool IsDialogue)> SplitNarrationAndDialogue(string paragraph)
+    {
+        var result = new List<(string Text, bool IsDialogue)>();
+        var remaining = paragraph;
+        while (remaining.Length > 0)
+        {
+            var opening = remaining.IndexOf('“');
+            if (opening < 0)
+            {
+                if (!string.IsNullOrWhiteSpace(remaining)) result.Add((remaining.Trim(), false));
+                break;
+            }
+
+            if (opening > 0) result.Add((remaining[..opening].Trim(), false));
+            var closing = remaining.IndexOf('”', opening + 1);
+            if (closing < 0)
+            {
+                result.Add((remaining[(opening + 1)..].Trim(), true));
+                break;
+            }
+
+            result.Add((remaining[(opening + 1)..closing].Trim(), true));
+            remaining = remaining[(closing + 1)..];
+        }
+        return result.Where(item => !string.IsNullOrWhiteSpace(item.Text)).ToList();
     }
 }
