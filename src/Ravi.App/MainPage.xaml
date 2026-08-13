@@ -135,7 +135,7 @@
 
                 <!-- Lessons -->
                 <VerticalStackLayout IsVisible="{Binding IsLessons}" Spacing="16">
-                    <Grid ColumnDefinitions="*,140">
+                    <Grid ColumnDefinitions="*,160">
                         <VerticalStackLayout Spacing="5">
                             <Label Text="YOUR COURSE" Style="{StaticResource SectionLabel}" />
                             <Label Text="{Binding WelcomeTitle}" TextColor="#102D55" FontSize="31" FontAttributes="Bold" />
@@ -195,9 +195,15 @@
                                 <Label Text="{Binding RaviTip}" FlowDirection="RightToLeft" TextColor="#9A4925" FontSize="14" HorizontalTextAlignment="End" />
                             </Border>
                         </VerticalStackLayout>
-                        <Image x:Name="RaviLesson" Grid.Column="1" Source="ravi_guide_v2.png" HeightRequest="150" Aspect="AspectFit">
-                            <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
-                        </Image>
+                        <Grid Grid.Column="1" HeightRequest="170" WidthRequest="160">
+                            <Border x:Name="RaviMotionRing" BackgroundColor="#D8F1EF" Stroke="#72C4BE" StrokeThickness="2" StrokeShape="Ellipse" HeightRequest="126" WidthRequest="126" Opacity="0.42" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Image x:Name="RaviLesson" Source="ravi_guide_v2.png" HeightRequest="158" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
+                            </Image>
+                            <Border x:Name="RaviSpeakingBadge" BackgroundColor="#102D55" StrokeThickness="0" StrokeShape="RoundRectangle 9" Padding="9,5" HorizontalOptions="Center" VerticalOptions="End" Opacity="0">
+                                <Label Text="RAVI IS SPEAKING" TextColor="White" FontSize="9" FontAttributes="Bold" CharacterSpacing="1" />
+                            </Border>
+                        </Grid>
                     </Grid>
 
                     <!-- Proper vocabulary list -->

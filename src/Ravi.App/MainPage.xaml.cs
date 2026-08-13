@@ -9,6 +9,7 @@ public partial class MainPage : ContentPage
     private CancellationTokenSource? _speechCancellation;
     private string _lastScreen = "Login";
     private int _lastStep = -1;
+    private bool _isSpeaking;
 
     public MainPage()
     {
@@ -43,6 +44,7 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
         _animationCancellation = new CancellationTokenSource();
         _ = AnimateRaviAsync(_animationCancellation.Token);
+        _ = AnimateLessonRaviIdleAsync(_animationCancellation.Token);
     }
 
     protected override void OnDisappearing()
@@ -60,9 +62,9 @@ public partial class MainPage : ContentPage
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, -2, 2200, Easing.SinInOut)));
-                await Task.WhenAll(characters.Select(character => character.ScaleToAsync(1.008, 1400, Easing.SinInOut)));
-                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, 0, 2200, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, -6, 1800, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.ScaleToAsync(1.018, 1200, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, 0, 1800, Easing.SinInOut)));
                 await Task.WhenAll(characters.Select(character => character.ScaleToAsync(1, 1400, Easing.SinInOut)));
             }
         }
@@ -70,6 +72,26 @@ public partial class MainPage : ContentPage
         {
             // The page stopped being visible; the idle animation can end quietly.
         }
+    }
+
+    private async Task AnimateLessonRaviIdleAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                if (_isSpeaking)
+                {
+                    await Task.Delay(250, cancellationToken);
+                    continue;
+                }
+                await RaviMotionRing.ScaleToAsync(1.08, 1600, Easing.SinInOut);
+                await RaviMotionRing.FadeToAsync(0.65, 900, Easing.SinInOut);
+                await RaviMotionRing.ScaleToAsync(1, 1600, Easing.SinInOut);
+                await RaviMotionRing.FadeToAsync(0.42, 900, Easing.SinInOut);
+            }
+        }
+        catch (OperationCanceledException) { }
     }
 
     private async void RaviTapped(object? sender, TappedEventArgs e)
@@ -189,6 +211,8 @@ public partial class MainPage : ContentPage
     private async Task SpeakWithRaviAsync(string text, SpeechOptions options, CancellationToken cancellationToken = default)
     {
         using var animationCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        _isSpeaking = true;
+        RaviSpeakingBadge.Opacity = 1;
         var pulse = AnimateSpeakingAsync(animationCancellation.Token);
         try
         {
@@ -201,6 +225,10 @@ public partial class MainPage : ContentPage
             RaviLesson.CancelAnimations();
             RaviLesson.Scale = 1;
             RaviLesson.TranslationY = 0;
+            await RaviSpeakingBadge.FadeToAsync(0, 180, Easing.CubicOut);
+            RaviMotionRing.Scale = 1;
+            RaviMotionRing.Opacity = 0.42;
+            _isSpeaking = false;
         }
     }
 
@@ -208,10 +236,16 @@ public partial class MainPage : ContentPage
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            await RaviLesson.ScaleToAsync(1.025, 280, Easing.SinInOut);
-            await RaviLesson.TranslateToAsync(0, -3, 260, Easing.SinInOut);
-            await RaviLesson.ScaleToAsync(1, 280, Easing.SinInOut);
-            await RaviLesson.TranslateToAsync(0, 0, 260, Easing.SinInOut);
+            await Task.WhenAll(
+                RaviLesson.ScaleToAsync(1.055, 260, Easing.SinInOut),
+                RaviLesson.TranslateToAsync(0, -6, 260, Easing.SinInOut),
+                RaviMotionRing.ScaleToAsync(1.16, 300, Easing.CubicOut),
+                RaviMotionRing.FadeToAsync(0.82, 260, Easing.CubicOut));
+            await Task.WhenAll(
+                RaviLesson.ScaleToAsync(1, 300, Easing.SinInOut),
+                RaviLesson.TranslateToAsync(0, 0, 300, Easing.SinInOut),
+                RaviMotionRing.ScaleToAsync(1, 340, Easing.CubicOut),
+                RaviMotionRing.FadeToAsync(0.42, 300, Easing.CubicOut));
         }
     }
 
@@ -219,20 +253,20 @@ public partial class MainPage : ContentPage
     {
         PageContent.CancelAnimations();
         PageContent.Opacity = 0;
-        PageContent.TranslationY = 12;
+        PageContent.TranslationY = 28;
         await Task.WhenAll(
-            PageContent.FadeToAsync(1, 260, Easing.CubicOut),
-            PageContent.TranslateToAsync(0, 0, 320, Easing.CubicOut));
+            PageContent.FadeToAsync(1, 340, Easing.CubicOut),
+            PageContent.TranslateToAsync(0, 0, 420, Easing.CubicOut));
     }
 
     private async Task AnimateLessonTransitionAsync()
     {
         LearningContent.CancelAnimations();
-        LearningContent.Opacity = 0.35;
-        LearningContent.TranslationX = 10;
+        LearningContent.Opacity = 0;
+        LearningContent.TranslationX = 28;
         await Task.WhenAll(
-            LearningContent.FadeToAsync(1, 220, Easing.CubicOut),
-            LearningContent.TranslateToAsync(0, 0, 260, Easing.CubicOut));
+            LearningContent.FadeToAsync(1, 300, Easing.CubicOut),
+            LearningContent.TranslateToAsync(0, 0, 360, Easing.CubicOut));
     }
 
     private async Task AnimateFeedbackAsync(bool isCorrect)
@@ -243,15 +277,21 @@ public partial class MainPage : ContentPage
         {
             await Task.WhenAll(
                 FeedbackCard.ScaleToAsync(1.015, 150, Easing.CubicOut),
-                RaviLesson.TranslateToAsync(0, -10, 180, Easing.CubicOut));
+                RaviLesson.TranslateToAsync(0, -18, 180, Easing.CubicOut),
+                RaviLesson.ScaleToAsync(1.08, 180, Easing.CubicOut),
+                RaviMotionRing.ScaleToAsync(1.22, 200, Easing.CubicOut));
             await Task.WhenAll(
                 FeedbackCard.ScaleToAsync(1, 220, Easing.CubicOut),
-                RaviLesson.TranslateToAsync(0, 0, 260, Easing.CubicOut));
+                RaviLesson.TranslateToAsync(0, 0, 300, Easing.CubicOut),
+                RaviLesson.ScaleToAsync(1, 280, Easing.CubicOut),
+                RaviMotionRing.ScaleToAsync(1, 300, Easing.CubicOut));
         }
         else
         {
-            await RaviLesson.TranslateToAsync(-5, 0, 90, Easing.Linear);
-            await RaviLesson.TranslateToAsync(5, 0, 90, Easing.Linear);
+            await RaviLesson.TranslateToAsync(-10, 0, 100, Easing.Linear);
+            await RaviLesson.TranslateToAsync(10, 0, 100, Easing.Linear);
+            await RaviLesson.TranslateToAsync(-6, 0, 90, Easing.Linear);
+            await RaviLesson.TranslateToAsync(6, 0, 90, Easing.Linear);
             await RaviLesson.TranslateToAsync(0, 0, 110, Easing.CubicOut);
         }
     }
