@@ -9,10 +9,12 @@ public partial class MainPage : ContentPage
     private CancellationTokenSource? _speechCancellation;
     private string _lastScreen = "Login";
     private int _lastStep = -1;
+    private readonly Dictionary<string, byte[]> _artworkCache = new(StringComparer.Ordinal);
 
     public MainPage()
     {
         InitializeComponent();
+        Loaded += async (_, _) => await LoadArtworkAsync();
         SizeChanged += (_, _) => ResizeStartHero();
         var viewModel = new HomeViewModel();
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
@@ -27,16 +29,42 @@ public partial class MainPage : ContentPage
         if (_lastScreen != vm.ScreenKey)
         {
             _lastScreen = vm.ScreenKey;
+            await LoadArtworkAsync();
             await AnimatePageTransitionAsync();
         }
         else if (vm.IsLearning && _lastStep != vm.StepIndex)
         {
             _lastStep = vm.StepIndex;
+            await SetPackagedImageAsync(RaviLesson, vm.RaviLessonArtwork);
             await AnimateLessonTransitionAsync();
         }
 
         if (e.PropertyName is null or "" && vm.HasFeedback)
             await AnimateFeedbackAsync(vm.LastAnswerCorrect);
+    }
+
+    private async Task LoadArtworkAsync()
+    {
+        await SetPackagedImageAsync(StageBackdrop, "ravi_cinematic_stage_mac.png");
+        await SetPackagedImageAsync(RaviMascot, "ravi_cinematic_stage_mac.png");
+        await SetPackagedImageAsync(RaviGrades, "ravi_courses_mac.png");
+        await SetPackagedImageAsync(RaviCourse, "ravi_courses_mac.png");
+        if (BindingContext is HomeViewModel vm)
+            await SetPackagedImageAsync(RaviLesson, vm.RaviLessonArtwork);
+    }
+
+    private async Task SetPackagedImageAsync(Image target, string fileName)
+    {
+        if (!_artworkCache.TryGetValue(fileName, out var bytes))
+        {
+            await using var packaged = await FileSystem.Current.OpenAppPackageFileAsync(fileName);
+            using var memory = new MemoryStream();
+            await packaged.CopyToAsync(memory);
+            bytes = memory.ToArray();
+            _artworkCache[fileName] = bytes;
+        }
+
+        target.Source = ImageSource.FromStream(() => new MemoryStream(bytes, writable: false));
     }
 
     protected override void OnAppearing()
