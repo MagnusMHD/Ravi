@@ -427,7 +427,6 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 
 public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam)
 {
-    public string IconSource => IsFinalExam ? "icon_award.svg" : "icon_lesson.svg";
     public string ActionLabel => IsFinalExam ? "Final challenge  →" : "Start lesson  →";
 }
 public sealed record VocabularyItem(int Number, string English, string Phonetic, string Pronunciation, string Persian);
