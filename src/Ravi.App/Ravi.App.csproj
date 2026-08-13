@@ -86,4 +86,15 @@
 	  <ProjectReference Include="..\Ravi.Core\Ravi.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Images\ravi_ui.png" LogicalName="RaviArtwork.ravi_ui.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_cinematic_stage_mac.png" LogicalName="RaviArtwork.ravi_cinematic_stage_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_courses_mac.png" LogicalName="RaviArtwork.ravi_courses_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_vocabulary_mac.png" LogicalName="RaviArtwork.ravi_vocabulary_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_story_mac.png" LogicalName="RaviArtwork.ravi_story_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_grammar_mac.png" LogicalName="RaviArtwork.ravi_grammar_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_listening_mac.png" LogicalName="RaviArtwork.ravi_listening_mac.png" />
+		<EmbeddedResource Include="Resources\Images\ravi_writing_mac.png" LogicalName="RaviArtwork.ravi_writing_mac.png" />
+	</ItemGroup>
+
 </Project>

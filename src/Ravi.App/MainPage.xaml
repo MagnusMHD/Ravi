@@ -134,7 +134,7 @@
                             </Border>
                         </VerticalStackLayout>
                         <Grid Grid.Column="1">
-                            <Image x:Name="RaviProfile" Source="ravi_ui.png" HeightRequest="610" Aspect="AspectFit" VerticalOptions="End">
+                            <Image x:Name="RaviProfile" HeightRequest="610" Aspect="AspectFit" VerticalOptions="End">
                                 <Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers>
                             </Image>
                             <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,8,100">

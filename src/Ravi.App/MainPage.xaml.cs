@@ -1,5 +1,6 @@
 using Ravi.App.ViewModels;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace Ravi.App;
 
@@ -49,6 +50,7 @@ public partial class MainPage : ContentPage
         await SetPackagedImageAsync(RaviMascot, "ravi_cinematic_stage_mac.png");
         await SetPackagedImageAsync(RaviGrades, "ravi_courses_mac.png");
         await SetPackagedImageAsync(RaviCourse, "ravi_courses_mac.png");
+        await SetPackagedImageAsync(RaviProfile, "ravi_ui.png");
         if (BindingContext is HomeViewModel vm)
             await SetPackagedImageAsync(RaviLesson, vm.RaviLessonArtwork);
     }
@@ -57,7 +59,9 @@ public partial class MainPage : ContentPage
     {
         if (!_artworkCache.TryGetValue(fileName, out var bytes))
         {
-            await using var packaged = await FileSystem.Current.OpenAppPackageFileAsync(fileName);
+            await using var packaged = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream($"RaviArtwork.{fileName}")
+                ?? throw new InvalidOperationException($"Embedded Ravi artwork is missing: {fileName}");
             using var memory = new MemoryStream();
             await packaged.CopyToAsync(memory);
             bytes = memory.ToArray();
