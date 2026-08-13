@@ -82,6 +82,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         Grades = new(Enumerable.Range(7, 6));
         Lessons = [];
         VocabularyItems = [];
+        LessonLines = [];
         SelectRoleCommand = new Command<string>(SelectRole);
         SelectGenderCommand = new Command<string>(SelectGender);
         CreateProfileCommand = new Command(CreateProfile);
@@ -97,6 +98,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public ObservableCollection<int> Grades { get; }
     public ObservableCollection<LessonCard> Lessons { get; }
     public ObservableCollection<VocabularyItem> VocabularyItems { get; }
+    public ObservableCollection<LessonLine> LessonLines { get; }
     public ICommand SelectRoleCommand { get; }
     public ICommand SelectGenderCommand { get; }
     public ICommand CreateProfileCommand { get; }
@@ -141,8 +143,11 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public string Answer { get => _answer; set { _answer = value; OnPropertyChanged(); } }
     private LessonStep CurrentStep => _steps.Length == 0 ? LessonStep.Empty : _steps[_stepIndex];
     public bool IsVocabularyStep => CurrentStep.Eyebrow.EndsWith("VOCABULARY", StringComparison.Ordinal);
-    public bool IsRegularStep => !IsVocabularyStep;
-    public bool IsStoryStep => CurrentStep.Eyebrow.Contains("STORY", StringComparison.Ordinal) || CurrentStep.Eyebrow.Contains("READING", StringComparison.Ordinal);
+    public bool IsPhraseStep => _grade == 7 && _currentLessonNumber == "01" && CurrentStep.Eyebrow.StartsWith("02 · PRONUNCIATION", StringComparison.Ordinal);
+    public bool IsStoryStep => CurrentStep.Eyebrow.Contains("STORY", StringComparison.Ordinal);
+    public bool IsRegularStep => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
+    public bool ShowExercise => !IsVocabularyStep && !IsPhraseStep && !IsStoryStep;
+    public bool HasTranslation => !string.IsNullOrWhiteSpace(CurrentStep.Translation);
 
     private void SelectRole(string? role) { if (role == "Student") { _screen = "Profile"; NotifyAll(); } }
     private void SelectGender(string? gender) { _gender = gender is "Girl" or "Boy" ? gender : string.Empty; _profileError = string.Empty; NotifyAll(); }
@@ -225,8 +230,8 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         [
             new("01 · NEW VOCABULARY", "Words and useful expressions", "hello · hi · good morning · good afternoon · good evening · goodbye · see you · please · thank you · fine · great · tired · today · name · friend", "سلام · سلام · صبح بخیر · بعدازظهر بخیر · عصر بخیر · خداحافظ · به امید دیدار · لطفاً · متشکرم · خوب · عالی · خسته · امروز · نام · دوست", "hello", "Listen to every word before you continue."),
             new("02 · PRONUNCIATION", "Ravi’s Echo", "1. Hello!\n2. Good morning.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام!\n۲. صبح بخیر.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "hello", "Listen and repeat each line aloud."),
-            new("03 · VOCABULARY PRACTICE", "English → Persian", "Translate these words: hello · friend · thank you · tired", "سلام · دوست · متشکرم · خسته", "سلام", "Translate “hello” into Persian."),
-            new("04 · VOCABULARY PRACTICE", "Persian → English", "Translate these words: متشکرم · خسته · نام · دوست", "thank you · tired · name · friend", "thank you", "Translate “متشکرم” into English."),
+            new("03 · VOCABULARY PRACTICE", "English → Persian", "Write the Persian meaning of the English word: hello", "", "سلام", "What does “hello” mean in Persian? Write one answer."),
+            new("04 · VOCABULARY PRACTICE", "Persian → English", "Write the English word for the Persian meaning: متشکرم", "", "thank you", "What is “متشکرم” in English? Write one answer."),
             new("05 · STORY", "The Secret Door", story, storyFarsi, "blue", "What colour is the secret door?"),
             new("06 · READING", "Story comprehension", "TRUE OR FALSE\n1. Ravi is a fox.\n2. It is evening.\n3. The door is blue.\n4. The girl’s name is Sara.\n5. Nika needs Ravi’s help.\n\nQUESTIONS\n• Where is Ravi?\n• What is behind the door?\n• How does Ravi feel?", "درست یا نادرست و پرسش‌های درک مطلب درباره داستان", "school", "Where is Ravi? Write: Near a school."),
             new("07 · TRANSLATION", "English → Persian", "1. Hello.\n2. My name is Ravi.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام.\n۲. نام من راوی است.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "سلام", "Translate “Hello.” into Persian."),
@@ -295,6 +300,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         _feedback = string.Empty;
         _showTranslation = false;
         VocabularyItems.Clear();
+        LessonLines.Clear();
         if (IsVocabularyStep && _grade == 7 && _currentLessonNumber == "01")
         {
             foreach (var item in Grade7Lesson1Vocabulary)
@@ -306,6 +312,14 @@ public sealed class HomeViewModel : INotifyPropertyChanged
             var persian = CurrentStep.Translation.Split('·', StringSplitOptions.TrimEntries);
             for (var index = 0; index < Math.Min(english.Length, persian.Length); index++)
                 VocabularyItems.Add(new(index + 1, english[index], string.Empty, string.Empty, persian[index]));
+        }
+        else if (IsPhraseStep || IsStoryStep)
+        {
+            var separator = IsStoryStep ? "\n\n" : "\n";
+            var english = CurrentStep.Content.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var persian = CurrentStep.Translation.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            for (var index = 0; index < english.Length; index++)
+                LessonLines.Add(new(index + 1, english[index], index < persian.Length ? persian[index] : string.Empty));
         }
         NotifyAll();
     }
@@ -321,3 +335,4 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 
 public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam);
 public sealed record VocabularyItem(int Number, string English, string Phonetic, string Pronunciation, string Persian);
+public sealed record LessonLine(int Number, string English, string Persian);

@@ -75,4 +75,21 @@ public partial class MainPage : ContentPage
             await TextToSpeech.Default.SpeakAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.85f });
         }
     }
+
+    private async void SpeakLineClicked(object? sender, EventArgs e)
+    {
+        var text = sender switch
+        {
+            Button { BindingContext: VocabularyItem word } => word.English,
+            Button { BindingContext: LessonLine line } => line.English,
+            _ => string.Empty
+        };
+
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        var locales = await TextToSpeech.Default.GetLocalesAsync();
+        var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
+        await TextToSpeech.Default.SpeakAsync(text, new SpeechOptions { Locale = english, Rate = 0.85f });
+    }
 }

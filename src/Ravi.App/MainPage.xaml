@@ -205,7 +205,7 @@
                                             <Label Text="{Binding Number}" TextColor="#173A69" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                                         </Border>
                                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                            <Label Text="{Binding English}" TextColor="#102D55" FontSize="19" FontAttributes="Bold" />
+                                            <Button Text="{Binding English}" Clicked="SpeakLineClicked" BackgroundColor="Transparent" TextColor="#102D55" FontSize="19" FontAttributes="Bold" Padding="0" HorizontalOptions="Start" />
                                             <HorizontalStackLayout Spacing="7">
                                                 <Label Text="{Binding Phonetic}" TextColor="#607086" FontSize="11" />
                                                 <Label Text="{Binding Pronunciation}" TextColor="#E65F2B" FontSize="11" FontAttributes="Bold" />
@@ -219,19 +219,51 @@
                         </VerticalStackLayout>
                     </VerticalStackLayout>
 
+                    <!-- Pronunciation phrases: English and Persian are always visible. -->
+                    <VerticalStackLayout IsVisible="{Binding IsPhraseStep}" Spacing="12">
+                        <Label Text="Tap an English sentence to hear it, then repeat it aloud." TextColor="#607086" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding LessonLines}" Spacing="10">
+                            <BindableLayout.ItemTemplate><DataTemplate>
+                                <Border Style="{StaticResource Card}" Padding="16">
+                                    <Grid ColumnDefinitions="42,*,*" ColumnSpacing="14">
+                                        <Border BackgroundColor="#E7EEF8" StrokeThickness="0" StrokeShape="RoundRectangle 12" HeightRequest="40" WidthRequest="40">
+                                            <Label Text="{Binding Number}" TextColor="#173A69" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                        </Border>
+                                        <Button Grid.Column="1" Text="{Binding English}" Clicked="SpeakLineClicked" BackgroundColor="Transparent" TextColor="#102D55" FontSize="18" FontAttributes="Bold" Padding="0" HorizontalOptions="Start" />
+                                        <Label Grid.Column="2" Text="{Binding Persian}" FlowDirection="RightToLeft" TextColor="#078F91" FontSize="17" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate></BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Story: every English paragraph is directly opposite its Persian translation. -->
+                    <VerticalStackLayout IsVisible="{Binding IsStoryStep}" Spacing="12">
+                        <Label Text="Tap an English paragraph to hear it." TextColor="#607086" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding LessonLines}" Spacing="10">
+                            <BindableLayout.ItemTemplate><DataTemplate>
+                                <Border Style="{StaticResource Card}" Padding="18">
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                                        <Button Text="{Binding English}" Clicked="SpeakLineClicked" BackgroundColor="Transparent" TextColor="#203858" FontSize="18" LineBreakMode="WordWrap" Padding="0" HorizontalOptions="Fill" VerticalOptions="Start" />
+                                        <Label Grid.Column="1" Text="{Binding Persian}" FlowDirection="RightToLeft" TextColor="#087F83" FontSize="18" LineHeight="1.45" HorizontalTextAlignment="End" VerticalOptions="Start" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate></BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
                     <!-- Story, grammar, listening, dictation and writing -->
                     <VerticalStackLayout IsVisible="{Binding IsRegularStep}" Spacing="12">
                         <Border Style="{StaticResource Card}" BackgroundColor="#EAF1F9" Stroke="#C4D5E8">
                             <VerticalStackLayout Spacing="16">
-                                <Label Text="STORY" IsVisible="{Binding IsStoryStep}" TextColor="#E65F2B" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" />
                                 <Label Text="{Binding StepContent}" TextColor="#203858" FontSize="20" LineHeight="1.55" />
                                 <Button Text="🔊   Listen in English" Clicked="SpeakClicked" Style="{StaticResource Secondary}" />
-                                <Button Text="{Binding StepTranslation}" Command="{Binding ToggleTranslationCommand}" BackgroundColor="Transparent" TextColor="#C74F25" FontAttributes="Bold" FontSize="16" />
+                                <Button Text="{Binding StepTranslation}" IsVisible="{Binding HasTranslation}" Command="{Binding ToggleTranslationCommand}" BackgroundColor="Transparent" TextColor="#C74F25" FontAttributes="Bold" FontSize="16" />
                             </VerticalStackLayout>
                         </Border>
                     </VerticalStackLayout>
 
-                    <Border Style="{StaticResource Card}">
+                    <Border Style="{StaticResource Card}" IsVisible="{Binding ShowExercise}">
                         <VerticalStackLayout Spacing="12">
                             <Label Text="YOUR TURN" Style="{StaticResource SectionLabel}" />
                             <Label Text="{Binding AnswerPrompt}" TextColor="#52647B" FontSize="15" />
