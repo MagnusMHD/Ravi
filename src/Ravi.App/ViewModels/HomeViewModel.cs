@@ -150,12 +150,12 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         get
         {
             var eyebrow = CurrentStep.Eyebrow;
-            if (IsVocabularyStep || IsPhraseStep) return "ravi_vocabulary.jpg";
-            if (IsStoryStep || eyebrow.Contains("READING", StringComparison.Ordinal)) return "ravi_story.jpg";
-            if (eyebrow.Contains("GRAMMAR", StringComparison.Ordinal)) return "ravi_grammar.jpg";
-            if (eyebrow.Contains("LISTENING", StringComparison.Ordinal) || eyebrow.Contains("DICTATION", StringComparison.Ordinal) || eyebrow.Contains("SPEAKING", StringComparison.Ordinal)) return "ravi_listening.jpg";
-            if (eyebrow.Contains("WRITING", StringComparison.Ordinal)) return "ravi_writing.jpg";
-            return "ravi_courses.jpg";
+            if (IsVocabularyStep || IsPhraseStep) return "ravi_vocabulary_mac.png";
+            if (IsStoryStep || eyebrow.Contains("READING", StringComparison.Ordinal)) return "ravi_story_mac.png";
+            if (eyebrow.Contains("GRAMMAR", StringComparison.Ordinal)) return "ravi_grammar_mac.png";
+            if (eyebrow.Contains("LISTENING", StringComparison.Ordinal) || eyebrow.Contains("DICTATION", StringComparison.Ordinal) || eyebrow.Contains("SPEAKING", StringComparison.Ordinal)) return "ravi_listening_mac.png";
+            if (eyebrow.Contains("WRITING", StringComparison.Ordinal)) return "ravi_writing_mac.png";
+            return "ravi_courses_mac.png";
         }
     }
     public string StoryTranslation => CurrentStep.Translation;

@@ -49,7 +49,7 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <Image Grid.RowSpan="2" Source="ravi_cinematic_stage.jpg" Aspect="AspectFill" Opacity="0.94" />
+        <Image Grid.RowSpan="2" Source="ravi_cinematic_stage_mac.png" Aspect="AspectFill" Opacity="0.94" />
         <BoxView Grid.RowSpan="2" Color="#55090D12" />
         <Grid IsVisible="{Binding ShowBack}" Padding="24,13" BackgroundColor="#CC171C22" ColumnDefinitions="44,*,Auto" ColumnSpacing="12">
             <Button Text="‹" Command="{Binding BackCommand}" IsVisible="{Binding ShowBack}"
@@ -73,7 +73,7 @@
 
                 <!-- Start -->
                 <Grid x:Name="StartHero" IsVisible="{Binding IsLogin}" MinimumHeightRequest="680">
-                    <Image x:Name="RaviMascot" Source="ravi_cinematic_stage.jpg" Aspect="AspectFill" />
+                    <Image x:Name="RaviMascot" Source="ravi_cinematic_stage_mac.png" Aspect="AspectFill" />
                     <BoxView Color="#30070B10" />
 
                     <Grid Padding="34,26" RowDefinitions="Auto,*,Auto">
@@ -180,7 +180,7 @@
                     </FlexLayout>
                     </VerticalStackLayout>
                     <Grid Grid.Column="1">
-                        <Image Source="ravi_courses.jpg" Aspect="AspectFill" />
+                        <Image Source="ravi_courses_mac.png" Aspect="AspectFill" />
                         <BoxView Color="#33090D12" />
                         <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,0,100">
                             <VerticalStackLayout Spacing="3"><Label Text="YOUR PATH" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" /><Label Text="Choose your grade." TextColor="#F3F4F5" FontSize="15" FontAttributes="Bold" /></VerticalStackLayout>
@@ -238,7 +238,7 @@
                     </VerticalStackLayout>
                     </VerticalStackLayout>
                     <Grid Grid.Column="1">
-                        <Image x:Name="RaviCourse" Source="ravi_courses.jpg" Aspect="AspectFill"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
+                        <Image x:Name="RaviCourse" Source="ravi_courses_mac.png" Aspect="AspectFill"><Image.GestureRecognizers><TapGestureRecognizer Tapped="RaviTapped" /></Image.GestureRecognizers></Image>
                         <BoxView Color="#33090D12" />
                         <Border BackgroundColor="#B5262C33" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 25" Padding="20,14" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,0,100">
                             <VerticalStackLayout Spacing="3"><Label Text="NEXT MISSION" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.4" /><Label Text="Pick a lesson to begin." TextColor="#F3F4F5" FontSize="15" FontAttributes="Bold" /></VerticalStackLayout>
