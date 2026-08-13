@@ -71,27 +71,34 @@
 
                 <!-- Start -->
                 <Grid x:Name="StartHero" IsVisible="{Binding IsLogin}" MinimumHeightRequest="680">
-                    <Border StrokeThickness="0" BackgroundColor="#D9DADB">
-                        <Grid>
-                            <Image x:Name="RaviMascot" Source="ravi_editorial_hero.jpg" Aspect="AspectFill" />
-                            <Grid Padding="64" ColumnDefinitions="1.05*,*">
-                                <VerticalStackLayout VerticalOptions="Center" Spacing="18" MaximumWidthRequest="440">
-                                    <Border BackgroundColor="#E8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 19" Padding="14,8" HorizontalOptions="Start">
-                                        <Label Text="ENGLISH, MADE PERSONAL" TextColor="#272D34" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.6" />
-                                    </Border>
-                                    <Label Text="Your next story starts here." TextColor="#11161B" FontSize="54" FontAttributes="Bold" LineHeight="0.98" />
-                                    <Label Text="راوی قدم‌به‌قدم کنارت است؛ از اولین واژه تا یک داستان کامل." FlowDirection="RightToLeft" TextColor="#4D555D" FontSize="17" LineHeight="1.35" HorizontalTextAlignment="End" />
-                                    <Button Text="Start learning     →" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" HorizontalOptions="Start" WidthRequest="220" />
-                                </VerticalStackLayout>
-                            </Grid>
-                            <Border BackgroundColor="#C8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 27" Padding="22,16" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,48,0">
-                                <VerticalStackLayout Spacing="3">
-                                    <Label Text="RAVI GUIDE" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.5" />
-                                    <Label Text="Listen · Read · Speak" TextColor="#1C2229" FontSize="17" FontAttributes="Bold" />
-                                </VerticalStackLayout>
+                    <BoxView Color="#ECEDEF" />
+                    <Label Text="RAVI" TextColor="#D7D9DC" FontSize="210" FontAttributes="Bold" CharacterSpacing="10" HorizontalOptions="Center" VerticalOptions="Center" TranslationY="-35" />
+                    <Image x:Name="RaviMascot" Source="ravi_ui.png" HeightRequest="690" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="End" TranslationX="90" />
+
+                    <Grid Padding="34,26" RowDefinitions="Auto,*,Auto">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                            <Border BackgroundColor="#F7F7F7" Stroke="#80FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 15" Padding="5" HeightRequest="48" WidthRequest="48"><Image Source="ravi_logo.png" Aspect="AspectFit" /></Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="-3" VerticalOptions="Center"><Label Text="RAVI" TextColor="#171C22" FontSize="21" FontAttributes="Bold" CharacterSpacing="2" /><Label Text="ENGLISH ADVENTURE" TextColor="#59616A" FontSize="8" CharacterSpacing="1.2" /></VerticalStackLayout>
+                            <HorizontalStackLayout Grid.Column="2" Spacing="24" VerticalOptions="Center"><Label Text="LEARN" TextColor="#272D34" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" /><Label Text="STORIES" TextColor="#272D34" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" /><Label Text="EN · FA" TextColor="#F0522D" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" /></HorizontalStackLayout>
+                        </Grid>
+
+                        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" HorizontalOptions="Start" Spacing="12" MaximumWidthRequest="390">
+                            <Label Text="LEARN ENGLISH WITH YOUR OWN GUIDE" TextColor="#F0522D" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.8" />
+                            <Label Text="A new world begins with one word." TextColor="#11161B" FontSize="48" FontAttributes="Bold" LineHeight="0.98" />
+                        </VerticalStackLayout>
+
+                        <Grid Grid.Row="2" ColumnDefinitions="1.1*,0.9*" ColumnSpacing="20">
+                            <Border BackgroundColor="#E6252B32" Stroke="#30FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 28" Padding="26,20">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                                    <VerticalStackLayout Spacing="7"><Label Text="YOUR ENGLISH ADVENTURE" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.5" /><Label Text="Vocabulary, stories, grammar and speaking — guided by Ravi." TextColor="White" FontSize="17" FontAttributes="Bold" LineHeight="1.25" /><Label Text="واژه، داستان و تمرین؛ قدم‌به‌قدم با راوی" FlowDirection="RightToLeft" TextColor="#C9CDD1" FontSize="14" HorizontalTextAlignment="End" /></VerticalStackLayout>
+                                    <Button Grid.Column="1" Text="START  →" Command="{Binding SelectRoleCommand}" CommandParameter="Student" Style="{StaticResource Primary}" WidthRequest="150" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1" BackgroundColor="#D8FFFFFF" Stroke="#70FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 28" Padding="24,18">
+                                <Grid ColumnDefinitions="*,Auto"><VerticalStackLayout Spacing="4"><Label Text="01 / YOUR JOURNEY" TextColor="#F0522D" FontSize="10" FontAttributes="Bold" CharacterSpacing="1.3" /><Label Text="Listen · Read · Speak" TextColor="#242A31" FontSize="17" FontAttributes="Bold" /></VerticalStackLayout><Label Grid.Column="1" Text="↓" TextColor="#242A31" FontSize="25" VerticalOptions="Center" /></Grid>
                             </Border>
                         </Grid>
-                    </Border>
+                    </Grid>
                 </Grid>
 
                 <!-- Profile -->
@@ -358,3 +365,4 @@
         </ScrollView>
     </Grid>
 </ContentPage>
+
