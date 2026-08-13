@@ -220,7 +220,7 @@
 
                     <!-- Storybook page: one continuous story with its translation opposite. -->
                     <VerticalStackLayout IsVisible="{Binding IsStoryStep}" Spacing="12">
-                        <Image Source="lesson1_secret_door.jpg" HeightRequest="310" Aspect="AspectFill" />
+                        <Image Source="{Binding StoryOpeningImage}" HeightRequest="310" Aspect="AspectFill" />
                         <Border Style="{StaticResource Card}" Padding="24">
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="28">
                                 <VerticalStackLayout Spacing="10">
@@ -235,7 +235,7 @@
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
-                        <Image Source="lesson1_magic_passage.jpg" HeightRequest="280" Aspect="AspectFill" />
+                        <Image Source="{Binding StoryEndingImage}" HeightRequest="280" Aspect="AspectFill" />
                     </VerticalStackLayout>
 
                     <!-- Story, grammar, listening, dictation and writing -->

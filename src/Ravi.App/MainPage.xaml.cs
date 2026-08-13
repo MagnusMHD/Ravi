@@ -62,7 +62,7 @@ public partial class MainPage : ContentPage
         {
             var locales = await TextToSpeech.Default.GetLocalesAsync();
             var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-            await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english });
+            await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.62f });
         }
     }
 
@@ -72,7 +72,7 @@ public partial class MainPage : ContentPage
         {
             var locales = await TextToSpeech.Default.GetLocalesAsync();
             var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-            await TextToSpeech.Default.SpeakAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.85f });
+            await TextToSpeech.Default.SpeakAsync(word.English, new SpeechOptions { Locale = english, Rate = 0.58f });
         }
     }
 
@@ -90,7 +90,7 @@ public partial class MainPage : ContentPage
 
         var locales = await TextToSpeech.Default.GetLocalesAsync();
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-        await TextToSpeech.Default.SpeakAsync(text, new SpeechOptions { Locale = english, Rate = 0.85f });
+        await TextToSpeech.Default.SpeakAsync(text, new SpeechOptions { Locale = english, Rate = 0.60f });
     }
 
     private async void StoryTapped(object? sender, TappedEventArgs e)
@@ -100,6 +100,6 @@ public partial class MainPage : ContentPage
 
         var locales = await TextToSpeech.Default.GetLocalesAsync();
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-        await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.82f });
+        await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.56f });
     }
 }
