@@ -81,12 +81,12 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     {
         Grades =
         [
-            new(7, "هفتم", "Start the adventure", "🗝️", "#E8F4FF", "#2474B5"),
-            new(8, "هشتم", "Build your confidence", "🧭", "#E9F8F3", "#078F83"),
-            new(9, "نهم", "Explore new worlds", "✨", "#FFF3E8", "#E65F2B"),
-            new(10, "دهم", "Master new skills", "📚", "#F1EDFF", "#7356B8"),
-            new(11, "یازدهم", "Speak with confidence", "🎙️", "#FFF0F3", "#C94E6D"),
-            new(12, "دوازدهم", "Complete the journey", "🏆", "#FFF8DF", "#B78516")
+            new(7, "هفتم", "Start the adventure"),
+            new(8, "هشتم", "Build your confidence"),
+            new(9, "نهم", "Explore new worlds"),
+            new(10, "دهم", "Master new skills"),
+            new(11, "یازدهم", "Speak with confidence"),
+            new(12, "دوازدهم", "Complete the journey")
         ];
         Lessons = [];
         VocabularyItems = [];
@@ -135,7 +135,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public string WelcomeTitle => $"Hello, {_studentName}!";
     public string WelcomeSubtitle => $"Ravi has prepared a personal learning path for age {_ageText}.";
     public string GradeTitle => $"Grade {_grade}";
-    public string StudentBadge => string.IsNullOrWhiteSpace(_studentName) ? "🔥 6" : $"🦊 {_studentName}";
+    public string StudentBadge => string.IsNullOrWhiteSpace(_studentName) ? "STUDENT" : _studentName;
     public string CourseProgressLabel => $"0 of {LessonCount} lessons completed";
     public int LessonCount => _grade == 8 ? Grade8.Length : Grade7.Length;
     public string StepEyebrow => CurrentStep.Eyebrow;
@@ -148,7 +148,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public string AnswerPrompt => CurrentStep.AnswerPrompt;
     public string ProgressLabel => $"Step {_stepIndex + 1} of {_steps.Length}";
     public double LessonProgress => _steps.Length == 0 ? 0 : (_stepIndex + 1d) / _steps.Length;
-    public string NextLabel => _stepIndex == _steps.Length - 1 ? "Complete lesson  ✦" : "Continue  →";
+    public string NextLabel => _stepIndex == _steps.Length - 1 ? "Complete lesson" : "Continue  →";
     public string Feedback => _feedback;
     public bool HasFeedback => !string.IsNullOrWhiteSpace(_feedback);
     public string Answer { get => _answer; set { _answer = value; OnPropertyChanged(); } }
@@ -374,10 +374,10 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         var isCorrect = _answer.Trim().Contains(expected, StringComparison.OrdinalIgnoreCase);
         _feedback = _grade == 7
             ? isCorrect
-                ? $"آفرین {_studentName}! پاسخ درست است و راوی به تو افتخار می‌کند ✨"
+                ? $"آفرین {_studentName}! پاسخ درست است و راوی به تو افتخار می‌کند."
                 : $"دوباره تلاش کن {_studentName}. راهنمای راوی: پاسخ شامل «{expected}» است."
             : isCorrect
-                ? $"Correct, {_studentName}! Ravi is proud of you ✨"
+                ? $"Correct, {_studentName}! Ravi is proud of you."
                 : $"Almost, {_studentName}! Ravi’s hint: your answer includes “{expected}”.";
         NotifyAll();
     }
@@ -423,29 +423,9 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 
 public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam)
 {
-    public string Icon => IsFinalExam ? "🏆" : Number switch
-    {
-        "01" => "👋", "02" => "✏️", "03" => "🤝", "04" => "🎒",
-        "05" => "🎂", "06" => "📅", "07" => "🏠", "08" => "🧑‍🏫",
-        "09" => "🧣", "10" => "🔎", "11" => "🚪", "12" => "🎭",
-        "13" => "📍", "14" => "🕰️", "15" => "🧺", _ => "✨"
-    };
-    public string Tint => IsFinalExam ? "#FFF5D7" : Number switch
-    {
-        "01" or "05" or "09" or "13" => "#E8F4FF",
-        "02" or "06" or "10" or "14" => "#E9F8F3",
-        "03" or "07" or "11" or "15" => "#FFF3E8",
-        _ => "#F1EDFF"
-    };
-    public string Accent => IsFinalExam ? "#B78516" : Number switch
-    {
-        "01" or "05" or "09" or "13" => "#2474B5",
-        "02" or "06" or "10" or "14" => "#078F83",
-        "03" or "07" or "11" or "15" => "#E65F2B",
-        _ => "#7356B8"
-    };
+    public string IconSource => IsFinalExam ? "icon_award.svg" : "icon_lesson.svg";
     public string ActionLabel => IsFinalExam ? "Final challenge  →" : "Start lesson  →";
 }
 public sealed record VocabularyItem(int Number, string English, string Phonetic, string Pronunciation, string Persian);
 public sealed record LessonLine(int Number, string English, string Persian);
-public sealed record GradeChoice(int Number, string PersianName, string Subtitle, string Icon, string Tint, string Accent);
+public sealed record GradeChoice(int Number, string PersianName, string Subtitle);

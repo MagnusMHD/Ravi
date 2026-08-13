@@ -31,10 +31,10 @@ public partial class MainPage : ContentPage
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, -5, 1100, Easing.SinInOut)));
-                await Task.WhenAll(characters.Select(character => character.RotateToAsync(1.2, 650, Easing.SinInOut)));
-                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, 0, 1100, Easing.SinInOut)));
-                await Task.WhenAll(characters.Select(character => character.RotateToAsync(-1.2, 650, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, -2, 2200, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.ScaleToAsync(1.008, 1400, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.TranslateToAsync(0, 0, 2200, Easing.SinInOut)));
+                await Task.WhenAll(characters.Select(character => character.ScaleToAsync(1, 1400, Easing.SinInOut)));
             }
         }
         catch (OperationCanceledException)
@@ -49,11 +49,11 @@ public partial class MainPage : ContentPage
             return;
 
         ravi.CancelAnimations();
-        await ravi.ScaleToAsync(1.1, 120, Easing.CubicOut);
-        await ravi.TranslateToAsync(0, -12, 150, Easing.CubicOut);
+        await ravi.ScaleToAsync(1.04, 140, Easing.CubicOut);
+        await ravi.TranslateToAsync(0, -5, 150, Easing.CubicOut);
         await Task.WhenAll(
-            ravi.ScaleToAsync(1, 220, Easing.BounceOut),
-            ravi.TranslateToAsync(0, 0, 220, Easing.BounceOut),
+            ravi.ScaleToAsync(1, 220, Easing.CubicOut),
+            ravi.TranslateToAsync(0, 0, 220, Easing.CubicOut),
             ravi.RotateToAsync(0, 220, Easing.SinInOut));
     }
 
