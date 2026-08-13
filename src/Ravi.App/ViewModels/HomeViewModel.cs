@@ -17,7 +17,27 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     private string _ageText = string.Empty;
     private string _gender = string.Empty;
     private string _profileError = string.Empty;
+    private string _currentLessonNumber = string.Empty;
     private LessonStep[] _steps = [];
+
+    private static readonly VocabularyItem[] Grade7Lesson1Vocabulary =
+    [
+        new(1, "hello", "/həˈləʊ/", "hə-LOU", "سلام"),
+        new(2, "hi", "/haɪ/", "hai", "سلام"),
+        new(3, "good morning", "/ɡʊd ˈmɔːnɪŋ/", "gud MOR-ning", "صبح بخیر"),
+        new(4, "good afternoon", "/ɡʊd ˌɑːftəˈnuːn/", "gud af-tə-NUN", "بعدازظهر بخیر"),
+        new(5, "good evening", "/ɡʊd ˈiːvnɪŋ/", "gud IW-ning", "عصر بخیر"),
+        new(6, "goodbye", "/ˌɡʊdˈbaɪ/", "gud-BAI", "خداحافظ"),
+        new(7, "see you", "/siː juː/", "sii ju", "می‌بینمت / به امید دیدار"),
+        new(8, "please", "/pliːz/", "pliis", "لطفاً"),
+        new(9, "thank you", "/ˈθæŋk juː/", "THÄNK ju", "متشکرم"),
+        new(10, "fine", "/faɪn/", "fain", "خوب"),
+        new(11, "great", "/ɡreɪt/", "greit", "عالی"),
+        new(12, "tired", "/ˈtaɪəd/", "TAI-əd", "خسته"),
+        new(13, "today", "/təˈdeɪ/", "tə-DEI", "امروز"),
+        new(14, "name", "/neɪm/", "neim", "نام"),
+        new(15, "friend", "/frend/", "frend", "دوست")
+    ];
 
     private static readonly LessonDefinition[] Grade7 =
     [
@@ -120,7 +140,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     public bool HasFeedback => !string.IsNullOrWhiteSpace(_feedback);
     public string Answer { get => _answer; set { _answer = value; OnPropertyChanged(); } }
     private LessonStep CurrentStep => _steps.Length == 0 ? LessonStep.Empty : _steps[_stepIndex];
-    public bool IsVocabularyStep => CurrentStep.Eyebrow.Contains("VOCABULARY", StringComparison.Ordinal);
+    public bool IsVocabularyStep => CurrentStep.Eyebrow.EndsWith("VOCABULARY", StringComparison.Ordinal);
     public bool IsRegularStep => !IsVocabularyStep;
     public bool IsStoryStep => CurrentStep.Eyebrow.Contains("STORY", StringComparison.Ordinal) || CurrentStep.Eyebrow.Contains("READING", StringComparison.Ordinal);
 
@@ -160,6 +180,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     private void OpenLesson(LessonCard? lesson)
     {
         if (lesson?.IsAvailable != true) return;
+        _currentLessonNumber = lesson.Number;
         _steps = lesson.IsFinalExam ? BuildFinalExam() : BuildLesson(GetDefinition(lesson.Number));
         _stepIndex = 0;
         _screen = "Learning";
@@ -171,6 +192,9 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 
     private LessonStep[] BuildLesson(LessonDefinition lesson)
     {
+        if (_grade == 7 && lesson.Number == "01")
+            return BuildGrade7Lesson1();
+
         var subject = IsGirl ? "she" : "he";
         var subjectTitle = IsGirl ? "She" : "He";
         var obj = IsGirl ? "her" : "him";
@@ -189,6 +213,31 @@ public sealed class HomeViewModel : INotifyPropertyChanged
             new("09 · WRITING", "Your turn", $"Write two sentences about {lesson.Topic.ToLowerInvariant()}. Ravi gives {obj} a golden leaf for a complete answer.", $"دو جمله درباره موضوع درس بنویس. راوی برای پاسخ کامل یک برگ طلایی می‌دهد.", _studentName, $"Begin with: My name is {_studentName}."),
             new("10 · LESSON EXAM", "Ravi’s Challenge", $"Exam: vocabulary, English↔Farsi, grammar, listening, dictation, reading and writing. Pass mark: 60%. Story question: {lesson.Question}", $"آزمون: واژگان، ترجمه دوطرفه، دستور زبان، شنیداری، املا، خواندن و نوشتن. حد قبولی: ۶۰٪", lesson.Expected, lesson.Question),
             new("11 · REWARD", $"Well done, {_studentName}!", $"You completed {lesson.Title}. Reward: up to 3 stars, 50 golden leaves and a Ravi badge.", $"آفرین {_studentName}! این درس را تمام کردی. جایزه: تا سه ستاره، ۵۰ برگ طلایی و نشان راوی.", "ravi", "Write: Thank you, Ravi!"),
+        ];
+    }
+
+    private LessonStep[] BuildGrade7Lesson1()
+    {
+        const string story = "It is morning. A young fox is standing near a school. His name is Ravi.\n\nRavi sees a blue door under a tree. The door opens slowly. A girl comes out.\n\n“Hello,” says the girl. “My name is Nika. What’s your name?”\n\n“Hi! I’m Ravi,” says the fox.\n\n“How are you today?” asks Nika.\n\n“I’m great, thank you. How are you?”\n\n“I’m fine.”\n\nNika looks at the blue door. A small golden light is behind it.\n\n“Nice to meet you, Ravi. I need your help.”\n\nRavi smiles. “Nice to meet you, too. Let’s go!”\n\nTogether, they walk through the secret door.";
+        const string storyFarsi = "صبح است. یک روباه جوان نزدیک یک مدرسه ایستاده است. نام او راوی است.\n\nراوی زیر یک درخت، یک درِ آبی می‌بیند. در به‌آرامی باز می‌شود. دختری بیرون می‌آید.\n\nدختر می‌گوید: «سلام. نام من نیکا است. نام تو چیست؟»\n\nروباه می‌گوید: «سلام! من راوی هستم.»\n\nنیکا می‌پرسد: «امروز حالت چطور است؟»\n\nراوی می‌گوید: «عالی‌ام، متشکرم. تو چطوری؟»\n\nنیکا می‌گوید: «خوبم.»\n\nنیکا به درِ آبی نگاه می‌کند. پشت آن نور طلایی کوچکی دیده می‌شود.\n\nنیکا می‌گوید: «از آشنایی با تو خوشحالم، راوی. به کمک تو نیاز دارم.»\n\nراوی لبخند می‌زند: «من هم از آشنایی با تو خوشحالم. بیا برویم!»\n\nآن‌ها با هم از درِ مخفی عبور می‌کنند.";
+
+        return
+        [
+            new("01 · NEW VOCABULARY", "Words and useful expressions", "hello · hi · good morning · good afternoon · good evening · goodbye · see you · please · thank you · fine · great · tired · today · name · friend", "سلام · سلام · صبح بخیر · بعدازظهر بخیر · عصر بخیر · خداحافظ · به امید دیدار · لطفاً · متشکرم · خوب · عالی · خسته · امروز · نام · دوست", "hello", "Listen to every word before you continue."),
+            new("02 · PRONUNCIATION", "Ravi’s Echo", "1. Hello!\n2. Good morning.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام!\n۲. صبح بخیر.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "hello", "Listen and repeat each line aloud."),
+            new("03 · VOCABULARY PRACTICE", "English → Persian", "Translate these words: hello · friend · thank you · tired", "سلام · دوست · متشکرم · خسته", "سلام", "Translate “hello” into Persian."),
+            new("04 · VOCABULARY PRACTICE", "Persian → English", "Translate these words: متشکرم · خسته · نام · دوست", "thank you · tired · name · friend", "thank you", "Translate “متشکرم” into English."),
+            new("05 · STORY", "The Secret Door", story, storyFarsi, "blue", "What colour is the secret door?"),
+            new("06 · READING", "Story comprehension", "TRUE OR FALSE\n1. Ravi is a fox.\n2. It is evening.\n3. The door is blue.\n4. The girl’s name is Sara.\n5. Nika needs Ravi’s help.\n\nQUESTIONS\n• Where is Ravi?\n• What is behind the door?\n• How does Ravi feel?", "درست یا نادرست و پرسش‌های درک مطلب درباره داستان", "school", "Where is Ravi? Write: Near a school."),
+            new("07 · TRANSLATION", "English → Persian", "1. Hello.\n2. My name is Ravi.\n3. How are you today?\n4. I’m fine, thank you.\n5. Nice to meet you.\n6. Goodbye. See you!", "۱. سلام.\n۲. نام من راوی است.\n۳. امروز حالت چطور است؟\n۴. خوبم، متشکرم.\n۵. از آشنایی با شما خوشحالم.\n۶. خداحافظ. به امید دیدار!", "سلام", "Translate “Hello.” into Persian."),
+            new("08 · TRANSLATION", "Persian → English", "1. سلام.\n2. نام من نیکا است.\n3. حالت چطور است؟\n4. من عالی‌ام.\n5. متشکرم.\n6. از آشنایی با شما خوشحالم.", "1. Hello. / Hi.\n2. My name is Nika.\n3. How are you?\n4. I’m great.\n5. Thank you.\n6. Nice to meet you.", "hello", "Translate “سلام” into English."),
+            new("09 · GRAMMAR", "The verb “to be”", "I am → I’m\nyou are → you’re\nhe is → he’s\nshe is → she’s\nit is → it’s\n\nExamples:\nI am Ravi. → I’m Ravi.\nI am fine. → I’m fine.\nI am tired. → I’m tired.", "من هستم · تو هستی · او هست · آن هست", "am", "Complete: I ___ Ravi."),
+            new("10 · LISTENING", "Listen carefully", "Good morning. My name is Amir. I’m fine today.\n\nListen twice. On the first listen, try not to read. Who is speaking? Is it morning? How is Amir?", "صبح بخیر. نام من امیر است. امروز خوبم.", "amir", "What is his name?"),
+            new("11 · DICTATION", "Listen and write", "Hello.\nMy name is Ravi.\nHow are you today?\nI’m fine, thank you.\nNice to meet you.\nGoodbye. See you!", "هر جمله را گوش کن و به انگلیسی بنویس.", "hello", "Listen, then write the first sentence."),
+            new("12 · WRITING", "Introduce yourself", $"Hello. My name is {_studentName}.\nI’m great today.\nNice to meet you.\n\nNow write three sentences: a greeting, your name, and how you feel.", $"سلام. نام من {_studentName} است. امروز عالی‌ام. از آشنایی با شما خوشحالم.", _studentName, "Write three English sentences to introduce yourself."),
+            new("13 · SPEAKING", "Speak with Ravi", $"Hello. My name is {_studentName}. I’m fine today. Nice to meet you.", $"سلام. نام من {_studentName} است. امروز خوبم. از آشنایی با شما خوشحالم.", _studentName, "Read the introduction aloud, then type it once."),
+            new("14 · LESSON EXAM", "Ravi’s First Challenge", "20 points · Pass mark: 12\n\nA. Vocabulary (4)\nB. Sentences (4)\nC. Grammar (3)\nD. Listening (3)\nE. Dictation (2)\nF. Story (2)\nG. Writing (2)\n\nStory question: Who needs Ravi’s help?", "۲۰ امتیاز · حد قبولی: ۱۲\nآزمون واژگان، جمله‌ها، دستور زبان، شنیداری، املا، داستان و نوشتن", "nika", "Who needs Ravi’s help?"),
+            new("15 · REWARD", "Ravi’s New Friend", "You earned up to three stars, 50 golden leaves, the first picture of the secret door, and access to Lesson 2: The New Student.", "تو تا سه ستاره، ۵۰ برگ طلایی، اولین تصویر در مخفی و دسترسی به درس دوم را به دست آوردی.", "thank", "Write: Thank you, Ravi!"),
         ];
     }
 
@@ -246,12 +295,17 @@ public sealed class HomeViewModel : INotifyPropertyChanged
         _feedback = string.Empty;
         _showTranslation = false;
         VocabularyItems.Clear();
-        if (IsVocabularyStep)
+        if (IsVocabularyStep && _grade == 7 && _currentLessonNumber == "01")
+        {
+            foreach (var item in Grade7Lesson1Vocabulary)
+                VocabularyItems.Add(item);
+        }
+        else if (IsVocabularyStep)
         {
             var english = CurrentStep.Content.Split('·', StringSplitOptions.TrimEntries);
             var persian = CurrentStep.Translation.Split('·', StringSplitOptions.TrimEntries);
             for (var index = 0; index < Math.Min(english.Length, persian.Length); index++)
-                VocabularyItems.Add(new(index + 1, english[index], persian[index]));
+                VocabularyItems.Add(new(index + 1, english[index], string.Empty, string.Empty, persian[index]));
         }
         NotifyAll();
     }
@@ -266,4 +320,4 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 }
 
 public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam);
-public sealed record VocabularyItem(int Number, string English, string Persian);
+public sealed record VocabularyItem(int Number, string English, string Phonetic, string Pronunciation, string Persian);

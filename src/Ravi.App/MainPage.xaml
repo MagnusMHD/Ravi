@@ -200,11 +200,17 @@
                         <VerticalStackLayout BindableLayout.ItemsSource="{Binding VocabularyItems}" Spacing="10">
                             <BindableLayout.ItemTemplate><DataTemplate>
                                 <Border Style="{StaticResource Card}" Padding="16">
-                                    <Grid ColumnDefinitions="42,*,*,52" ColumnSpacing="12">
+                                    <Grid ColumnDefinitions="42,1.3*,*,52" ColumnSpacing="12">
                                         <Border BackgroundColor="#E7EEF8" StrokeThickness="0" StrokeShape="RoundRectangle 12" HeightRequest="40" WidthRequest="40">
                                             <Label Text="{Binding Number}" TextColor="#173A69" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                                         </Border>
-                                        <Label Grid.Column="1" Text="{Binding English}" TextColor="#102D55" FontSize="19" FontAttributes="Bold" VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <Label Text="{Binding English}" TextColor="#102D55" FontSize="19" FontAttributes="Bold" />
+                                            <HorizontalStackLayout Spacing="7">
+                                                <Label Text="{Binding Phonetic}" TextColor="#607086" FontSize="11" />
+                                                <Label Text="{Binding Pronunciation}" TextColor="#E65F2B" FontSize="11" FontAttributes="Bold" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
                                         <Label Grid.Column="2" Text="{Binding Persian}" FlowDirection="RightToLeft" TextColor="#078F91" FontSize="18" HorizontalTextAlignment="End" VerticalOptions="Center" />
                                         <Button Grid.Column="3" Text="🔊" Clicked="SpeakWordClicked" BackgroundColor="#E7F7F5" TextColor="#087F83" CornerRadius="12" HeightRequest="44" WidthRequest="48" Padding="0" />
                                     </Grid>
