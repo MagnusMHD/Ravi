@@ -79,7 +79,15 @@ public sealed class HomeViewModel : INotifyPropertyChanged
 
     public HomeViewModel()
     {
-        Grades = new(Enumerable.Range(7, 6));
+        Grades =
+        [
+            new(7, "هفتم", "Start the adventure", "🗝️", "#E8F4FF", "#2474B5"),
+            new(8, "هشتم", "Build your confidence", "🧭", "#E9F8F3", "#078F83"),
+            new(9, "نهم", "Explore new worlds", "✨", "#FFF3E8", "#E65F2B"),
+            new(10, "دهم", "Master new skills", "📚", "#F1EDFF", "#7356B8"),
+            new(11, "یازدهم", "Speak with confidence", "🎙️", "#FFF0F3", "#C94E6D"),
+            new(12, "دوازدهم", "Complete the journey", "🏆", "#FFF8DF", "#B78516")
+        ];
         Lessons = [];
         VocabularyItems = [];
         LessonLines = [];
@@ -95,7 +103,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    public ObservableCollection<int> Grades { get; }
+    public ObservableCollection<GradeChoice> Grades { get; }
     public ObservableCollection<LessonCard> Lessons { get; }
     public ObservableCollection<VocabularyItem> VocabularyItems { get; }
     public ObservableCollection<LessonLine> LessonLines { get; }
@@ -352,6 +360,31 @@ public sealed class HomeViewModel : INotifyPropertyChanged
     }
 }
 
-public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam);
+public sealed record LessonCard(string Number, string Title, string Meta, string Duration, bool IsAvailable, bool IsFinalExam)
+{
+    public string Icon => IsFinalExam ? "🏆" : Number switch
+    {
+        "01" => "👋", "02" => "✏️", "03" => "🤝", "04" => "🎒",
+        "05" => "🎂", "06" => "📅", "07" => "🏠", "08" => "🧑‍🏫",
+        "09" => "🧣", "10" => "🔎", "11" => "🚪", "12" => "🎭",
+        "13" => "📍", "14" => "🕰️", "15" => "🧺", _ => "✨"
+    };
+    public string Tint => IsFinalExam ? "#FFF5D7" : Number switch
+    {
+        "01" or "05" or "09" or "13" => "#E8F4FF",
+        "02" or "06" or "10" or "14" => "#E9F8F3",
+        "03" or "07" or "11" or "15" => "#FFF3E8",
+        _ => "#F1EDFF"
+    };
+    public string Accent => IsFinalExam ? "#B78516" : Number switch
+    {
+        "01" or "05" or "09" or "13" => "#2474B5",
+        "02" or "06" or "10" or "14" => "#078F83",
+        "03" or "07" or "11" or "15" => "#E65F2B",
+        _ => "#7356B8"
+    };
+    public string ActionLabel => IsFinalExam ? "Final challenge  →" : "Start lesson  →";
+}
 public sealed record VocabularyItem(int Number, string English, string Phonetic, string Pronunciation, string Persian);
 public sealed record LessonLine(int Number, string English, string Persian);
+public sealed record GradeChoice(int Number, string PersianName, string Subtitle, string Icon, string Tint, string Accent);

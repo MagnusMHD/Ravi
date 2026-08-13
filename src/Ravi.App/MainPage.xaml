@@ -104,15 +104,30 @@
 
                 <!-- Grades -->
                 <VerticalStackLayout IsVisible="{Binding IsGrades}" Spacing="18">
-                    <Label Text="YOUR LEARNING PATH" Style="{StaticResource SectionLabel}" />
-                    <Label Text="Which grade are you in?" TextColor="#102D55" FontSize="30" FontAttributes="Bold" />
-                    <Label Text="Ravi will match the vocabulary, stories and exercises to your grade." TextColor="#607086" FontSize="16" />
-                    <FlexLayout BindableLayout.ItemsSource="{Binding Grades}" Wrap="Wrap" JustifyContent="SpaceBetween">
+                    <Border BackgroundColor="#102D55" StrokeThickness="0" StrokeShape="RoundRectangle 26" Padding="24,18">
+                        <Grid ColumnDefinitions="*,150">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="7">
+                                <Label Text="CHOOSE YOUR PATH" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.5" />
+                                <Label Text="Which grade are you in?" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                                <Label Text="پایه خود را انتخاب کن تا راوی مسیر مناسب را باز کند." FlowDirection="RightToLeft" TextColor="#DCE8F7" FontSize="16" HorizontalTextAlignment="End" />
+                            </VerticalStackLayout>
+                            <Image Grid.Column="1" Source="ravi_guide_v2.png" HeightRequest="160" Aspect="AspectFit" />
+                        </Grid>
+                    </Border>
+                    <FlexLayout BindableLayout.ItemsSource="{Binding Grades}" Wrap="Wrap" JustifyContent="SpaceBetween" AlignItems="Start">
                         <BindableLayout.ItemTemplate><DataTemplate>
-                            <Button Text="{Binding StringFormat='Grade {0}'}"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectGradeCommand}"
-                                    CommandParameter="{Binding .}" Style="{StaticResource Secondary}"
-                                    WidthRequest="155" HeightRequest="86" FontSize="18" Margin="0,6" />
+                            <Border BackgroundColor="{Binding Tint}" Stroke="{Binding Accent}" StrokeThickness="1" StrokeShape="RoundRectangle 22" Padding="18" WidthRequest="225" Margin="0,7">
+                                <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectGradeCommand}" CommandParameter="{Binding Number}" /></Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="9">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Icon}" FontSize="31" />
+                                        <Label Grid.Column="1" Text="{Binding PersianName}" FlowDirection="RightToLeft" TextColor="{Binding Accent}" FontSize="16" FontAttributes="Bold" />
+                                    </Grid>
+                                    <Label Text="{Binding Number, StringFormat='Grade {0}'}" TextColor="#102D55" FontSize="24" FontAttributes="Bold" />
+                                    <Label Text="{Binding Subtitle}" TextColor="#607086" FontSize="13" />
+                                    <Label Text="Choose  →" TextColor="{Binding Accent}" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
                         </DataTemplate></BindableLayout.ItemTemplate>
                     </FlexLayout>
                 </VerticalStackLayout>
@@ -131,25 +146,34 @@
                         </Image>
                     </Grid>
                     <Border Style="{StaticResource Card}" BackgroundColor="#102D55" StrokeThickness="0">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="COURSE PROGRESS" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" />
-                            <Label Text="{Binding CourseProgressLabel}" TextColor="White" FontSize="21" FontAttributes="Bold" />
-                            <ProgressBar Progress="0" ProgressColor="#F37A3F" BackgroundColor="#2B4770" HeightRequest="8" />
-                        </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="YOUR ADVENTURE MAP" TextColor="#65D5D1" FontSize="11" FontAttributes="Bold" CharacterSpacing="1.4" />
+                                <Label Text="{Binding CourseProgressLabel}" TextColor="White" FontSize="21" FontAttributes="Bold" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="🦊 ✦" TextColor="#F6B866" FontSize="24" VerticalOptions="Center" />
+                            <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Progress="0" ProgressColor="#F37A3F" BackgroundColor="#2B4770" HeightRequest="8" Margin="0,10,0,0" />
+                        </Grid>
                     </Border>
                     <VerticalStackLayout BindableLayout.ItemsSource="{Binding Lessons}" Spacing="12">
                         <BindableLayout.ItemTemplate><DataTemplate>
-                            <Border Style="{StaticResource Card}">
+                            <Border BackgroundColor="{Binding Tint}" Stroke="{Binding Accent}" StrokeThickness="1" StrokeShape="RoundRectangle 22" Padding="18">
                                 <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenLessonCommand}" CommandParameter="{Binding .}" /></Border.GestureRecognizers>
-                                <Grid ColumnDefinitions="56,*,Auto" ColumnSpacing="14">
-                                    <Border BackgroundColor="#E7EEF8" Stroke="#C8D7E8" StrokeShape="RoundRectangle 14" HeightRequest="54" WidthRequest="54">
-                                        <Label Text="{Binding Number}" TextColor="#E65F2B" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                <Grid ColumnDefinitions="68,*,Auto" ColumnSpacing="16">
+                                    <Border BackgroundColor="White" Stroke="{Binding Accent}" StrokeShape="RoundRectangle 17" HeightRequest="64" WidthRequest="64">
+                                        <VerticalStackLayout Spacing="-4" HorizontalOptions="Center" VerticalOptions="Center">
+                                            <Label Text="{Binding Icon}" FontSize="24" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding Number}" TextColor="{Binding Accent}" FontSize="11" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                                        </VerticalStackLayout>
                                     </Border>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="3">
-                                        <Label Text="{Binding Title}" TextColor="#102D55" FontSize="18" FontAttributes="Bold" />
-                                        <Label Text="{Binding Meta}" TextColor="#6D7B8F" FontSize="12" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                        <Label Text="{Binding Title}" TextColor="#102D55" FontSize="19" FontAttributes="Bold" />
+                                        <Label Text="{Binding Meta}" TextColor="#607086" FontSize="12" />
+                                        <Label Text="{Binding ActionLabel}" TextColor="{Binding Accent}" FontSize="13" FontAttributes="Bold" />
                                     </VerticalStackLayout>
-                                    <Label Grid.Column="2" Text="{Binding Duration}" TextColor="#078F91" VerticalOptions="Center" FontAttributes="Bold" FontSize="12" />
+                                    <Border Grid.Column="2" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="10,6" VerticalOptions="Center">
+                                        <Label Text="{Binding Duration}" TextColor="{Binding Accent}" FontAttributes="Bold" FontSize="12" />
+                                    </Border>
                                 </Grid>
                             </Border>
                         </DataTemplate></BindableLayout.ItemTemplate>

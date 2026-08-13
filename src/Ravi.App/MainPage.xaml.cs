@@ -100,6 +100,13 @@ public partial class MainPage : ContentPage
 
         var locales = await TextToSpeech.Default.GetLocalesAsync();
         var english = locales.FirstOrDefault(locale => locale.Language.StartsWith("en", StringComparison.OrdinalIgnoreCase));
-        await TextToSpeech.Default.SpeakAsync(vm.StepContent, new SpeechOptions { Locale = english, Rate = 0.56f });
+        var options = new SpeechOptions { Locale = english, Rate = 0.36f };
+        var paragraphs = vm.StepContent.Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var paragraph in paragraphs)
+        {
+            await TextToSpeech.Default.SpeakAsync(paragraph, options);
+            await Task.Delay(950);
+        }
     }
 }
